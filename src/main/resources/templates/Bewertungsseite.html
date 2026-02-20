@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bewertung | PetCareConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/Bewertungsseite.css}" />
+    <script th:src="@{/Bewertungsseite.js}"></script>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="headerContainer">
+    <div class="header">
+        <a th:href="@{/}" class="logo">
+            <img th:src="@{/images/logo1.png}" alt="PetCareConnect Logo" />
+        </a>
+        <div class="headerLinks">
+            <a th:href="@{/}">Startseite</a>
+            <a th:href="@{/betreuerfinden}">Betreuer finden</a>
+            <a th:href="@{/chat-overview}">Chat</a>
+            <a th:href="@{/contact}">Kontakt</a>
+
+            <div th:if="${user != null}" class="userProfileBox">
+                <a th:href="@{/profile}" th:text="${user.firstName + ' ' + user.lastName}" class="userNameLink"></a>
+                <img th:src="@{/profile/image/{id}(id=${user.id})}" alt="Profilbild" class="profilePic" />
+                <form th:action="@{/logout}" method="post">
+                    <button class="btn" type="submit">Abmelden</button>
+                </form>
+            </div>
+
+            <div class="notification-bell" id="notificationBell" title="Neue Nachricht">
+                <span class="icon">🔔</span>
+                <span id="msgNotificationCount" class="badge" style="display: none;">0</span>
+                <div id="notificationDropdown">
+                    <ul id="notificationList"></ul>
+                </div>
+            </div>
+
+            <div th:if="${#authentication.authenticated}">
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="btn">Abmelden</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="Main_Container">
+    <div class="user_Container">
+        <img th:src="@{/profile/image/{id}(id=${BewerteteUser.id})}"
+             onerror="this.onerror=null;this.src='/images/m.png';"
+             alt="Benutzerbild"
+             class="user_Image" />
+        <p class="user_Name" th:text="${BewerteteUser.firstName + ' ' + BewerteteUser.lastName}">Benutzername</p>
+    </div>
+
+    <div class="rating-section">
+        <form th:action="@{/user/{user_id}(user_id=${BewerteteUser.id})}"
+              th:object="${neue_Bewertung}"
+              method="post"
+              id="bewertungsFormular">
+
+            <div class="Stern_Container">
+                <h3>Bewerten Sie den Betreuer:</h3>
+                <div class="stars" id="stars">☆☆☆☆☆</div>
+                <input type="hidden" id="ratingValue" th:field="*{rating}" />
+            </div>
+
+            <div class="Kommentare_Container">
+                <h3>Kommentar hinterlassen:</h3>
+                <textarea th:field="*{kommentar}"
+                          placeholder="Schreibe einen Kommentar..."
+                          class="comment_Textarea"></textarea>
+                <button type="submit" class="submit_Button">Speichern</button>
+            </div>
+        </form>
+
+        <div class="previous-comments">
+            <h3>Bisherige Bewertungen:</h3>
+            <div th:each="bewertung : ${Bewertung}" class="comment-box">
+                <div class="comment-header">
+          <span class="comment-author"
+                th:text="${bewertung.autor.firstName + ' ' + bewertung.autor.lastName}">Autor</span>
+                    <span class="comment-rating"
+                          th:if="${bewertung.rating != null}"
+                          th:text="${'★'.repeat(bewertung.rating) + '☆'.repeat(5 - bewertung.rating)}">★★★★☆</span>
+                    <span class="comment-date"
+                          th:text="${#temporals.format(bewertung.erstellungsdatum, 'dd.MM.yyyy')}">01.01.2023</span>
+                </div>
+                <div class="comment-text" th:text="${bewertung.kommentar}">Kommentartext hier...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footerContainer">
+    <div class="footer">
+        <div class="footerColumns">
+            <div class="footerColumn">
+                <h3>PetCareConnect</h3>
+                <p>Die beste Plattform für Haustierbetreuung in Deutschland</p>
+            </div>
+            <div class="footerColumn">
+                <h3>Quick Links</h3>
+                <a href="#">Über uns</a>
+                <a href="#">Services</a>
+                <a href="#">Preise</a>
+                <a href="#">FAQ</a>
+            </div>
+            <div class="footerColumn">
+                <h3>Kontakt</h3>
+                <p>info@petcareconnect.de</p>
+                <p>+49 0000000000</p>
+            </div>
+        </div>
+        <div class="footerBottom">
+            © 2023 PetCareConnect GmbH. Alle Rechte vorbehalten.
+        </div>
+    </div>
+</div>
+
+<!-- NOTIFICATION SOCKET -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", () => {
+        const socket = new SockJS('/ws-chat');
+        const stompClient = Stomp.over(socket);
+
+        const notificationBell = document.getElementById("notificationBell");
+        const notificationDropdown = document.getElementById("notificationDropdown");
+        const notificationList = document.getElementById("notificationList");
+        const badge = document.getElementById("msgNotificationCount");
+
+        notificationBell.addEventListener("click", () => {
+            notificationDropdown.style.display = notificationDropdown.style.display === "none" ? "block" : "none";
+        });
+
+        fetch('/api/notifications/unread')
+            .then(response => response.json())
+            .then(notifications => {
+                if (notifications.length > 0) {
+                    badge.style.display = "inline-block";
+                    badge.innerText = notifications.length;
+                    notifications.forEach(msg => showNotification(msg));
+                }
+            });
+
+        stompClient.connect({}, function (frame) {
+            stompClient.subscribe("/user/queue/notify", function (message) {
+                const msg = JSON.parse(message.body);
+                showNotification(msg);
+                badge.style.display = "inline-block";
+                badge.innerText = parseInt(badge.innerText || "0") + 1;
+            });
+        });
+
+        function showNotification(msg) {
+            const listItem = document.createElement("li");
+            listItem.innerHTML = `
+        <a href="/chat?receiverId=${msg.senderId}" style="text-decoration: none; color: #333;">
+          Neue Nachricht von <strong>${msg.senderName}</strong><br/>
+          <small>${msg.content}</small>
+        </a>`;
+            notificationList.prepend(listItem);
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,241 @@
+/* === VARIABLES === */
+:root {
+    --primary: #2a7f62;
+    --accent: #ff6b6b;
+    --background: #f7f7f7;
+    --text-dark: #333;
+    --text-muted: #666;
+    --white: #ffffff;
+    --radius: 10px;
+    --shadow: 0 0 20px rgba(0,0,0,0.05);
+    --font: 'Poppins', sans-serif;
+}
+
+/* === BASE === */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font);
+    background-color: var(--background);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.pageWrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* === HEADER === */
+.headerContainer {
+    background-color: var(--primary);
+}
+
+.header {
+    height: 80px;
+    background-color: var(--primary);
+    color: var(--white);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 100px 0;
+    max-width: 1300px;
+    margin: auto;
+    position: relative;
+}
+
+.logo img {
+    width: 120px;
+}
+
+.laufender-text {
+    position: absolute;
+    top: 0;
+    left: 150px;
+    color: var(--white);
+    font-size: 20px;
+    animation: laufen 6s linear infinite alternate;
+    white-space: nowrap;
+}
+
+@keyframes laufen {
+    0% { transform: translateX(40%); }
+    100% { transform: translateX(10%); }
+}
+
+/* === FORMULAR === */
+.loginContainer {
+    flex: 1;
+    display: flex;
+    padding: 50px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.loginForm {
+    flex: 1;
+    background: var(--white);
+    padding: 60px;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+}
+
+.loginForm h1 {
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.loginForm p {
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+.formGroup {
+    margin-bottom: 30px;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.formGroup input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: var(--radius);
+    font-size: 1rem;
+}
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.primaryBtn {
+    background-color: var(--primary);
+    color: var(--white);
+    width: 100%;
+    font-size: 1rem;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.primaryBtn:hover {
+    background-color: #1e5c47;
+}
+
+.signupPrompt {
+    text-align: center;
+    margin: 25px 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.signupPrompt a {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.feedbackMessage {
+    text-align: center;
+    color: var(--accent);
+    margin-top: 20px;
+    font-weight: 500;
+}
+
+/* === FOOTER === */
+.footerContainer {
+    background-color: var(--primary);
+    padding: 80px 20px 30px;
+    color: var(--white);
+}
+
+.footer {
+    max-width: 1300px;
+    margin: auto;
+}
+
+.footerColumns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: space-between;
+}
+
+.footerColumn {
+    flex: 1;
+    min-width: 200px;
+}
+
+.footerColumn h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.footerColumn p,
+.footerColumn a {
+    color: #e0e0e0;
+    font-size: 14px;
+    line-height: 1.8;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.footerColumn a:hover {
+    text-decoration: underline;
+}
+
+.footerBottom {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 14px;
+    color: #e0e0e0;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .loginContainer {
+        flex-direction: column;
+        padding: 30px 15px;
+    }
+
+    .laufender-text {
+        font-size: 16px;
+        left: 100px;
+    }
+
+    .loginForm {
+        padding: 30px;
+    }
+}
+.passwordWrapper {
+    position: relative;
+}
+
+.passwordWrapper input {
+    padding-right: 40px;
+}
+
+.togglePassword {
+    position: absolute;
+    top: 50%;
+    right: -6.50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    color: #999;
+    user-select: none;
+}

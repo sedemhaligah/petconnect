@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- FONTS -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" th:href="@{/Profilbearbeitung.css}" />
+  <title>Profil bearbeiten | PetCareConnect</title>
+  <!-- CSRF Token -->
+  <meta name="_csrf" th:content="${_csrf.token}" />
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+
+  <!-- FullCalendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet" />
+</head>
+
+<body>
+<!-- HEADER -->
+<div class="headerContainer">
+  <div class="header">
+    <a th:href="@{/}" class="logo">
+      <img th:src="@{/images/logo1.png}" alt="PetCareConnect Logo" />
+    </a>
+    <div class="headerLinks">
+      <a th:href="@{/}">Startseite</a>
+      <a th:href="@{/betreuerfinden}">Betreuer finden</a>
+      <a th:href="@{/chat-overview}">Chat</a>
+      <a th:href="@{/contact}">Kontakt</a>
+
+      <div th:if="${currentUser != null}" class="userProfileBox">
+        <a th:href="@{/profile}" th:text="${currentUser.firstName + ' ' + currentUser.lastName}" class="userNameLink"></a>
+        <img th:src="@{/profile/image/{id}(id=${currentUser.id})}" alt="Profilbild" class="profilePic" />
+        <form th:action="@{/logout}" method="post">
+          <button class="btn" type="submit">Abmelden</button>
+        </form>
+      </div>
+
+      <div class="notification-bell" id="notificationBell" title="Neue Nachricht">
+        <span class="icon">🔔</span>
+        <span id="msgNotificationCount" class="badge" style="display: none;">1</span>
+        <div id="notificationDropdown">
+          <ul id="notificationList"></ul>
+        </div>
+      </div>
+
+      <div th:if="${#authentication.authenticated}">
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+          <button type="submit" class="btn">Abmelden</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Status Messages -->
+<div th:if="${success}" class="alert alert-success" role="alert">
+  <p th:text="${success}">Success message</p>
+</div>
+<div th:if="${error}" class="alert alert-danger" role="alert">
+  <p th:text="${error}">Error message</p>
+</div>
+
+<!-- PROFILE HEADER -->
+<div class="profileHeaderContainer">
+  <div class="profileHeader">
+    <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data">
+      <div class="profileImage">
+        <!-- Profilbild mit Klick-Funktion -->
+        <img id="profileImage" th:src="${user.profilePicURL != null ? user.profilePicURL : '../images/m.png'}" alt="Profilbild" onclick="changeProfileImage()" />
+        <!-- Input für Bildauswahl -->
+        <input type="file" id="imageUpload" name="profileImage" style="display: none;" onchange="previewImage(event)" />
+      </div>
+
+      <div class="profileInfo">
+        <h1>Profil bearbeiten</h1>
+        <div class="profile-inputs">
+
+          <div class="form-group">
+            <label for="role">Ich bin:</label>
+            <select id="role" name="role" required>
+              <option value="besitzer" th:selected="${user.role == 'besitzer'}">Haustierbesitzer</option>
+              <option value="betreuer" th:selected="${user.role == 'betreuer'}">Haustierbetreuer</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="firstName">Vorname</label>
+            <input type="text" name="firstName" id="firstName" th:value="${user.firstName}" required readonly />
+          </div>
+
+          <div class="form-group">
+            <label for="lastName">Nachname</label>
+            <input type="text" name="lastName" id="lastName" th:value="${user.lastName}" required readonly />
+          </div>
+
+          <div class="form-group">
+            <label for="email">E-Mail</label>
+            <input type="email" name="email" id="email" th:value="${user.email}" required readonly />
+          </div>
+
+          <div class="form-group">
+            <label for="plz">PLZ</label>
+            <input type="text" name="plz" id="plz" th:value="${user.plz}" required />
+          </div>
+
+          <div class="form-group">
+            <label for="address">Adresse</label>
+            <input type="text" name="address" id="address" th:value="${user.address}" required />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Telefonnummer</label>
+            <input type="text" name="phone" id="phone" th:value="${user.phone}" required />
+          </div>
+
+          <div class="form-group">
+            <label for="experience">Erfahrung (z.B. Hunde , Katzen, Kleintiere, Tierart-Assistent/in)</label>
+            <input type="text" name="experience" id="experience" th:value="${user.experience}" />
+          </div>
+
+          <div class="form-group full-width">
+            <button type="submit" class="btn primaryBtn">Änderungen speichern</button>
+          </div>
+
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ABOUT SECTION -->
+<div class="aboutSection">
+  <div class="aboutContent">
+    <h1>Über mich</h1>
+    <div class="aboutBox">
+      <form th:action="@{/profile/update}" method="post">
+
+        <!-- Über mich Text -->
+        <textarea id="aboutMeText" name="aboutMe" placeholder="Erzähl etwas über dich..." th:text="${user.aboutMe}"></textarea>
+
+        <!-- Lightbox-Overlay -->
+        <div id="lightbox" class="lightbox" onclick="this.style.display='none'">
+          <img id="lightbox-img" src="" alt="Vorschau">
+        </div>
+
+        <!-- Speichern -->
+        <button type="submit" id="saveButton" class="btn">Speichern</button>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="aboutSection">
+  <div class="aboutContent">
+    <h1>Haustierfotos hochladen</h1>
+    <div class="aboutBox">
+
+      <form th:action="@{/profile/uploadPetPhotos}" method="post" enctype="multipart/form-data">
+        <label for="petPhotos">Lade bis zu 3 Bilder deiner Haustiere hoch:</label>
+        <input type="file" id="petPhotos" name="petPhotos" accept="image/png, image/jpeg" multiple required>
+        <button type="submit" class="btn">Fotos hochladen</button>
+      </form>
+      <!-- Bereits hochgeladene Haustierfotos anzeigen -->
+      <div class="photo-gallery" style="margin-top: 20px;">
+        <div th:each="photo : ${petPhotos}" style="display: inline-block; position: relative; margin: 10px;">
+          <img th:src="@{'/uploads/pet_photos/' + ${photo.fileName}}" alt="Haustierfoto"
+               style="height: 100px; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.2);" />
+          <form th:action="@{/profile/delete-photo/{id}(id=${photo.id})}" method="post"
+                onsubmit="return confirm('Möchtest du dieses Foto wirklich löschen?');"
+                style="position: absolute; top: -5px; right: -5px;">
+            <button type="submit"
+                    style="background-color: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer;">×</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Vorschau der gewählten Bilder -->
+      <div id="photoPreview" class="photo-preview"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICES SECTION -->
+<div class="profileServices">
+  <h1>Meine Dienstleistungen</h1>
+  <div class="serviceCards" id="serviceCards">
+    <!-- Existing services from database -->
+    <div th:each="service, stat : ${user.services}" class="serviceCard">
+      <form th:action="@{/profile/service/update}" method="post">
+        <input type="hidden" name="serviceId" th:value="${service.id}" />
+        <div class="serviceHeader">
+          <h3><input type="text" name="title" th:value="${service.title}" class="serviceTitle" disabled readonly /></h3>
+          <span class="price"><input type="number" name="price" th:value="${service.price}" class="servicePrice" /> € /Std</span>
+        </div>
+        <p><textarea name="description" class="serviceDescription" th:text="${service.description}"></textarea></p>
+        <ul class="serviceFeatures">
+          <li th:each="feature, featStat : ${service.features}">
+            <input type="text" name="features" th:value="${feature}" />
+            <button type="button" class="removeFeatureBtn" th:onclick="'removeFeature(this)'">✕</button>
+          </li>
+          <li>
+            <button type="button" class="addFeatureBtn" onclick="addFeature(this)">+ Feature hinzufügen</button>
+          </li>
+        </ul>
+        <div class="serviceActions">
+          <button type="submit" class="btn updateServiceBtn">Aktualisieren</button>
+        </div>
+      </form>
+      <form th:action="@{/profile/service/remove}" method="post" style="display:inline;">
+        <input type="hidden" name="serviceId" th:value="${service.id}" />
+        <button type="submit" class="btn removeServiceBtn">Dienstleistung entfernen</button>
+      </form>>
+    </div>
+  </div>
+
+  <!-- Add new service form -->
+  <div class="addServiceForm">
+    <h2>Neue Dienstleistung hinzufügen</h2>
+    <form th:action="@{/profile/service/add}" method="post">
+      <div class="form-group">
+        <label for="serviceTitle">Titel</label>
+        <div class="custom-select">
+          <select id="serviceTitle" name="title" required>
+            <option value="" disabled selected hidden>Dienstleistung auswählen</option>
+            <option value="gassi-service">Gassi-Service</option>
+            <option value="betreuung zuhause">Betreuung Zuhause</option>
+            <option value="erziehung & training">Erziehung & Training</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="servicePrice">Preis (€)</label>
+        <input type="number" id="servicePrice" name="price" step="0.01" required />
+      </div>
+      <div class="form-group">
+        <label for="serviceDescription">Beschreibung</label>
+        <textarea id="serviceDescription" name="description" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>Features</label>
+        <div id="featuresList">
+          <div class="feature-item">
+            <input type="text" name="features" placeholder="Feature hinzufügen" />
+          </div>
+        </div>
+        <button type="button" onclick="addNewFeatureField()" class="btn">+ Weiteres Feature</button>
+      </div>
+      <button type="submit" class="btn primaryBtn">Dienstleistung hinzufügen</button>
+    </form>
+  </div>
+</div>
+
+<!-- AVAILABILITY SECTION -->
+<div class="availabilitySection">
+  <h2>Verfügbarkeit</h2>
+  <div id="calendar"></div>
+</div>
+
+<!-- FOOTER -->
+<div class="footerContainer">
+  <div class="footer">
+    <div class="footerColumns">
+      <div class="footerColumn">
+        <h3>PetCareConnect</h3>
+        <p>Die beste Plattform für Haustierbetreuung in Deutschland</p>
+      </div>
+      <div class="footerColumn">
+        <h3>Quick Links</h3>
+        <a href="#">Über uns</a>
+        <a href="#">Services</a>
+        <a href="#">Preise</a>
+        <a href="#">FAQ</a>
+      </div>
+      <div class="footerColumn">
+        <h3>Kontakt</h3>
+        <p>info@petcareconnect.de</p>
+        <p>+49 30 1234567</p>
+      </div>
+    </div>
+    <div class="footerBottom">
+      © 2023 PetCareConnect GmbH. Alle Rechte vorbehalten.
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPT -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+<script th:inline="javascript">
+  var userId = /*[[${user.id}]]*/ 0;
+</script>
+
+<script>
+
+  // Funktion, um das Profilbild zu ändern
+  function changeProfileImage() {
+    document.getElementById('imageUpload').click();  // Klick auf das versteckte Input-Element auslösen
+  }
+
+  // Funktion, um das neue Bild in der Vorschau anzuzeigen
+  function previewImage(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function() {
+      const output = document.getElementById('profileImage');
+      output.src = reader.result;  // Das Bild im <img>-Tag ändern
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);  // Bild als Daten-URL lesen
+    }
+  }
+
+  // Feature management
+  function addFeature(button) {
+    const featureList = button.parentElement.parentElement;
+    const newFeature = document.createElement('li');
+    newFeature.innerHTML = `
+      <input type="text" name="features" placeholder="Neues Feature" />
+      <button type="button" class="removeFeatureBtn" onclick="removeFeature(this)">✕</button>
+    `;
+    featureList.insertBefore(newFeature, button.parentElement);
+  }
+
+  function removeFeature(button) {
+    const featureItem = button.parentElement;
+    featureItem.parentElement.removeChild(featureItem);
+  }
+
+  function addNewFeatureField() {
+    const featuresList = document.getElementById('featuresList');
+    const newFeature = document.createElement('div');
+    newFeature.className = 'feature-item';
+    newFeature.innerHTML = `
+      <input type="text" name="features" placeholder="Feature hinzufügen" />
+      <button type="button" onclick="removeNewFeature(this)" class="removeBtn">✕</button>
+    `;
+    featuresList.appendChild(newFeature);
+  }
+
+  function removeNewFeature(button) {
+    const featureItem = button.parentElement;
+    featureItem.parentElement.removeChild(featureItem);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      events: function(info, successCallback, failureCallback) {
+        fetch(`/api/availability/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                  const events = data.map(item => {
+                    return {
+                      title: 'Verfügbar',
+                      start: item.date,
+                      allDay: true
+                    };
+                  });
+                  successCallback(events);
+                })
+                .catch(error => {
+                  console.error('Error fetching availability:', error);
+                  failureCallback(error);
+                });
+      },
+      dateClick: function(info) {
+        var date = info.dateStr;  // Date clicked
+        console.log('Date clicked: ' + date);
+
+        // Check if the date is already available
+        fetch(`/api/availability/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                  const availabilityDates = data.map(item => item.date);
+                  if (availabilityDates.includes(date)) {
+                    // If available, ask if the user wants to remove the availability
+                    if (confirm(`Möchten Sie Ihre Verfügbarkeit für den ${date} löschen?`)) {
+                      // Delete availability
+                      fetch(`/api/availability/remove?userId=${userId}&date=${date}`, {
+                        method: 'DELETE',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        }
+                      })
+                              .then(response => {
+                                if (response.ok) {
+                                  alert('Verfügbarkeit wurde gelöscht!');
+                                  calendar.refetchEvents();  // Refresh the calendar events
+                                } else {
+                                  alert('Fehler beim Löschen der Verfügbarkeit!');
+                                }
+                              })
+                              .catch(error => {
+                                console.error('Error removing availability:', error);
+                              });
+                    }
+                  } else {
+                    // If not available, add availability
+                    if (confirm(`Möchten Sie Ihre Verfügbarkeit für den ${date} hinzufügen?`)) {
+                      fetch('/api/availability/add', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          userId: userId,
+                          date: date
+                        })
+                      })
+                              .then(response => response.json())
+                              .then(data => {
+                                alert('Verfügbarkeit wurde hinzugefügt!');
+                                calendar.refetchEvents();  // Refresh the calendar events
+                              })
+                              .catch(error => {
+                                console.error('Error adding availability:', error);
+                              });
+                    }
+                  }
+                })
+                .catch(error => {
+                  console.error('Error fetching availability:', error);
+                });
+      }
+
+    });
+
+    calendar.render();
+  });
+
+</script>
+
+<!-- JavaScript für Vorschau -->
+<script>
+  // Vorschau der ausgewählten Haustierbilder
+  const input = document.getElementById('petPhotos')
+  as
+  HTMLInputElement;
+  const preview = document.getElementById('photoPreview')
+  as
+  HTMLElement;
+
+  input.addEventListener('change', () => {
+    preview.innerHTML = '';
+
+    const files = input.files;
+    if (!files) return;
+
+    Array.from(files).forEach(file => {
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = document.createElement('img');
+          img.src = (e.target
+          as
+          FileReader).result
+          as
+          string;
+          img.style.height = '100px';
+          img.style.margin = '5px';
+          preview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  });
+
+
+</script>
+<!-- NOTIFICATION SOCKET -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+<script th:inline="javascript">
+  document.addEventListener("DOMContentLoaded", () => {
+    const socket = new SockJS('/ws-chat');
+    const stompClient = Stomp.over(socket);
+
+    const notificationBell = document.getElementById("notificationBell");
+    const notificationDropdown = document.getElementById("notificationDropdown");
+    const notificationList = document.getElementById("notificationList");
+    const badge = document.getElementById("msgNotificationCount");
+
+    // Toggle dropdown on click
+    notificationBell.addEventListener("click", () => {
+      notificationDropdown.style.display = notificationDropdown.style.display === "none" ? "block" : "none";
+    });
+
+    // Fetch unread messages
+    fetch('/api/notifications/unread')
+            .then(response => response.json())
+            .then(notifications => {
+              if (notifications.length > 0) {
+                badge.style.display = "inline-block";
+                badge.innerText = notifications.length;
+
+                notifications.forEach(msg => showNotification(msg));
+              }
+            });
+
+    // WebSocket connection
+    stompClient.connect({}, function (frame) {
+      stompClient.subscribe("/user/queue/notify", function (message) {
+        const msg = JSON.parse(message.body);
+        showNotification(msg);
+        badge.style.display = "inline-block";
+        badge.innerText = parseInt(badge.innerText || "0") + 1;
+      });
+    });
+
+    function showNotification(msg) {
+      const listItem = document.createElement("li");
+      listItem.innerHTML = `
+                <a href="/chat?receiverId=${msg.senderId}" style="text-decoration: none; color: #333;">
+                    Neue Nachricht von <strong>${msg.senderName}</strong><br/>
+                    <small>${msg.content}</small>
+                </a>`;
+      notificationList.prepend(listItem);
+    }
+  });
+</script>
+
+</body>
+</html>

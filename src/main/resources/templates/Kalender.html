@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetCareConnect - Kalender</title>
+
+  <!-- FullCalendar -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js"></script>
+
+  <link rel="stylesheet" href="../static/Kalender.css" th:href="@{/Kalender.css}">
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="headerContainer">
+  <div class="header">
+    <a th:href="@{/}" class="logo">
+      <img th:src="@{/images/logo1.png}" alt="PetCareConnect Logo" />
+    </a>
+    <div class="headerLinks">
+      <a th:href="@{/Kalender.html}">Mein Kalender</a>
+      <a th:href="@{/}">Startseite</a>
+      <a href="#">Betreuer finden</a>
+      <a href="#">Dienstleistungen</a>
+      <a th:href="@{/contact}">Kontakt</a>
+      <button class="btn">Anmelden</button>
+    </div>
+  </div>
+</div>
+
+<!-- KALENDER -->
+<h2>📅 Mein Google Kalender</h2>
+<button id="authorize_button">Mit Google anmelden</button>
+<button id="signout_button">Abmelden</button>
+<div id="calendar"></div>
+
+<!-- GOOGLE API -->
+<script src="https://apis.google.com/js/api.js?onload=gapiLoaded"></script>
+<script src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+
+<script>
+  const CLIENT_ID = '471307434042-ebshkf0cgae654o2jvkssu849sobgdrd.apps.googleusercontent.com';
+  const API_KEY = 'AIzaSyBbs0GC52JnTXK7S8ZA2YbYXxUnzoKYF9U';
+  const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
+  const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
+
+  let calendar;
+  let tokenClient;
+  let gapiInited = false;
+  let gisInited = false;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initCalendar();
+  });
+
+  function gapiLoaded() {
+    gapi.load('client', initializeGapiClient);
+  }
+
+  async function initializeGapiClient() {
+    await gapi.client.init({
+      apiKey: API_KEY,
+      discoveryDocs: [DISCOVERY_DOC],
+    });
+    gapiInited = true;
+    maybeEnableButtons();
+  }
+
+  function gisLoaded() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: SCOPES,
+      callback: (tokenResponse) => {
+        if (tokenResponse.error) {
+          console.error(tokenResponse);
+          alert('Fehler bei Anmeldung.');
+          return;
+        }
+        document.getElementById('authorize_button').innerText = 'Neu laden';
+        document.getElementById('signout_button').style.display = 'inline-block';
+        loadEvents();
+      },
+    });
+    gisInited = true;
+    maybeEnableButtons();
+  }
+
+  function maybeEnableButtons() {
+    if (gapiInited && gisInited) {
+      document.getElementById('authorize_button').style.display = 'inline-block';
+    }
+  }
+
+  document.getElementById('authorize_button').onclick = () => {
+    tokenClient.requestAccessToken();
+  };
+
+  document.getElementById('signout_button').onclick = () => {
+    const token = gapi.client.getToken();
+    if (token) {
+      google.accounts.oauth2.revoke(token.access_token, () => {
+        gapi.client.setToken('');
+        calendar.removeAllEvents();
+        document.getElementById('authorize_button').innerText = 'Mit Google anmelden';
+        document.getElementById('signout_button').style.display = 'none';
+      });
+    }
+  };
+
+  function initCalendar() {
+    const calendarEl = document.getElementById('calendar');
+    calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      locale: 'de',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      height: 'auto',
+      eventClick: (info) => {
+        alert(`Termin: ${info.event.title}\nBeginn: ${info.event.start.toLocaleString()}`);
+      }
+    });
+    calendar.render();
+  }
+
+  async function loadEvents() {
+    try {
+      const response = await gapi.client.calendar.events.list({
+        calendarId: 'primary',
+        timeMin: (new Date()).toISOString(),
+        showDeleted: false,
+        singleEvents: true,
+        maxResults: 50,
+        orderBy: 'startTime'
+      });
+
+      const events = response.result.items.map(event => ({
+        title: event.summary || '(Kein Titel)',
+        start: event.start.dateTime || event.start.date,
+        end: event.end.dateTime || event.end.date,
+        allDay: !event.start.dateTime
+      }));
+
+      calendar.removeAllEvents();
+      calendar.addEventSource(events);
+    } catch (error) {
+      console.error('Fehler beim Laden der Termine:', error);
+      alert('Fehler beim Laden der Kalenderdaten.');
+    }
+  }
+</script>
+
+<!-- FOOTER -->
+<div class="footerContainer">
+  <div class="footer">
+    <div class="footerColumns">
+      <div class="footerColumn">
+        <h3>PetCareConnect</h3>
+        <p>Die beste Plattform für Haustierbetreuung in Deutschland</p>
+      </div>
+      <div class="footerColumn">
+        <h3>Quick Links</h3>
+        <a href="#">Über uns</a>
+        <a href="#">Services</a>
+        <a href="#">Preise</a>
+        <a href="#">FAQ</a>
+      </div>
+      <div class="footerColumn">
+        <h3>Kontakt</h3>
+        <p>info@petcareconnect.de</p>
+        <p>+49 30 1234567</p>
+      </div>
+    </div>
+    <div class="footerBottom">
+      © 2025 PetCareConnect GmbH. Alle Rechte vorbehalten.
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

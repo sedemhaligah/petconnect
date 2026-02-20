@@ -1,0 +1,331 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f7f7f7;
+}
+.headerContainer {
+    background-color: #2a7f62;
+}
+.header {
+    height: 120px;
+    background-color: #2a7f62;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 100px 0 100px;
+    max-width: 1300px;
+    margin: auto;
+}
+
+.logo img {
+    width: 120px;
+}
+
+.btn {
+    border-radius: 50px;
+    height: 52px;
+    border: none;
+    font-weight: 600;
+    font-size: medium;
+    padding: 0 25px;
+    background-color: #ff6b6b;
+    color: #fff;
+    transition: .3s;
+    cursor: pointer;
+}
+.laufender-text {
+    position: absolute;
+    top: 0;
+    width: 70%;
+    color: #fff;
+    font-size: 24px;
+    padding: 30px;
+    white-space: nowrap;
+    animation: laufen 5s linear infinite alternate;
+}
+
+@keyframes laufen {
+    0% {
+        transform: translateX(40%);
+    }
+    100% {
+        transform: translateX(10%);
+    }
+}
+
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* LOGIN SECTION */
+.loginContainer {
+    display: flex;
+    padding: 221px 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 50px;
+}
+
+.loginForm {
+    flex: 1;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+.loginForm h1 {
+    color: #2a7f62;
+    margin-bottom: 10px;
+}
+
+.loginForm p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.formGroup input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.forgotPassword {
+    text-align: right;
+    margin-top: 10px;
+}
+
+.forgotPassword a {
+    color: #2a7f62;
+    font-size: 0.9rem;
+}
+
+.rememberMe {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.primaryBtn {
+    background-color: #2a7f62;
+    color: white;
+    width: 100%;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+.signupPrompt {
+    text-align: center;
+    margin: 25px 0;
+    color: #666;
+}
+
+.signupPrompt a {
+    color: #2a7f62;
+    font-weight: 500;
+}
+
+.socialLogin {
+    text-align: center;
+    margin-top: 40px;
+    border-top: 1px solid #eee;
+    padding-top: 30px;
+}
+
+.socialLogin p {
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.socialIcons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.socialBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.socialBtn:hover {
+    transform: translateY(-3px);
+}
+
+.socialBtn img {
+    width: 24px;
+    height: 24px;
+}
+
+.socialBtn.google {
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+.socialBtn.facebook {
+    background: #3b5998;
+}
+
+.socialBtn.apple {
+    background: #000;
+}
+
+/* LOGIN BENEFITS */
+.loginBenefits {
+    flex: 1;
+    max-width: 500px;
+}
+
+.loginBenefits h2 {
+    color: #2a7f62;
+    margin-bottom: 20px;
+}
+
+.loginBenefits ul {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 40px;
+}
+
+.loginBenefits li {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.loginBenefits li:before {
+    content: "✓";
+    color: #2a7f62;
+    font-weight: bold;
+}
+
+.testimonial {
+    margin-top: 30px;
+}
+
+.testimonial img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.testimonial blockquote {
+    font-style: italic;
+    color: #444;
+}
+
+.testimonial cite {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #777;
+}
+
+/* Responsive Anpassungen */
+@media (max-width: 1024px) {
+    .loginContainer {
+        flex-direction: column;
+        padding: 30px;
+    }
+
+    .loginBenefits {
+        max-width: 100%;
+        margin-top: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .socialIcons {
+        flex-wrap: wrap;
+    }
+
+    .socialBtn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .socialBtn img {
+        width: 20px;
+        height: 20px;
+    }
+}
+.footerContainer {
+    background-color: #2a7f62;
+    padding: 80px 0 30px 0;
+    color: white;
+}
+
+.footer {
+    max-width: 1300px;
+    margin: auto;
+}
+
+.footerColumns {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 50px;
+}
+
+.footerColumn {
+    flex: 1;
+    padding: 0 20px;
+}
+
+.footerColumn h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.footerColumn p, .footerColumn a {
+    color: #e0e0e0;
+    font-size: 14px;
+    line-height: 1.8;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.footerColumn a:hover {
+    text-decoration: underline;
+}
+
+.footerBottom {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 14px;
+    color: #e0e0e0;
+}

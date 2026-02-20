@@ -1,0 +1,692 @@
+/* === GENERAL === */
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* === HEADER === */
+.headerContainer {
+    background-color: #2a7f62;
+    border-bottom: 1px solid #eee;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 100px 0 100px;
+    max-width: 1300px;
+    margin: auto;
+    height: 120px;
+    background-color: #2a7f62;
+    color: #fff;
+    flex-wrap: wrap;
+}
+
+.logo img {
+    width: 120px;
+}
+
+.headerLinks {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex: 1;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+}
+
+.headerLinks a, .headerLinks span {
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    background-color: #2a7f62;
+    border: 2px solid #2a7f62;
+    transition: background-color 0.3s ease;
+}
+
+.headerLinks a:hover {
+    background-color: #3a9d7a;
+    color: white;
+}
+
+.userProfileBox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profilePic {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+}
+
+.userNameLink {
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.userNameLink:hover {
+    text-decoration: underline;
+}
+
+.btn {
+    border-radius: 50px;
+    border: none;
+    padding: 8px 16px;
+    background-color: #ff6b6b;
+    color: white;
+    font-weight: 600;
+    font-size: medium;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    height: 52px;
+}
+
+.btn:hover {
+    background-color: #ff5252;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+/* === NOTIFICATION BELL === */
+.notification-bell {
+    display: flex;
+    align-items: center;
+    position: relative;
+    font-size: 22px;
+    color: white;
+    cursor: pointer;
+}
+
+.notification-bell .badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 4px 7px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#notificationDropdown {
+    display: none;
+    position: absolute;
+    top: 120%;
+    right: 0;
+    width: 280px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 10px 0;
+    z-index: 999;
+    font-size: 14px;
+}
+
+#notificationDropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#notificationDropdown ul li {
+    padding: 10px 15px;
+    transition: background 0.2s ease;
+}
+
+#notificationDropdown ul li a {
+    color: #333;
+    font-weight: 500;
+    display: block;
+    line-height: 1.4;
+}
+
+#notificationDropdown ul li a small {
+    display: block;
+    color: #666;
+    font-weight: 400;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#notificationDropdown ul li:hover {
+    background-color: #f2fdf8;
+    cursor: pointer;
+}
+
+/* === LANDING PAGE === */
+.landingPageContainer {
+    background-color: #3a9d7a;
+    border-radius: 0 0 90px 100px;
+}
+
+.landingPage {
+    display: flex;
+    justify-content: space-between;
+    padding: 100px 0;
+    max-width: 1300px;
+    margin: auto;
+    color: white;
+    background-color: #3a9d7a;
+    flex-wrap: wrap;
+}
+
+.leftSide {
+    flex: 8;
+    padding-top: 30px;
+    padding-right: 40px;
+}
+
+.imageContainer {
+    flex: 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.imageContainer img {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.welcome {
+    font-size: x-large;
+    margin-bottom: 10px;
+    height: 10px;
+}
+
+.slogan {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.description {
+    font-size: 1rem;
+    line-height: 1.6;
+    max-width: 600px;
+    color: #f0f0f0;
+    width: 80%;
+    font-weight: 500;
+}
+
+.searchBar {
+    margin-top: 50px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+.searchBar input {
+    flex: 1;
+    min-width: 420px;
+    width: 60%;
+    height: 50px;
+    padding: 0 20px;
+    border-radius: 50px;
+    border: none;
+    font-size: 1rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    outline: none;
+}
+
+.searchBar input::placeholder {
+    font-size: medium;
+}
+
+.searchBar .searchBtn {
+    position: absolute;
+    left: 400px;
+}
+
+
+
+.userProfileBox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* === SERVICES SECTION === */
+.servicesContainer {
+    margin: auto;
+    max-width: 1300px;
+    margin-top: 100px;
+}
+
+.servicesHeader, .caregiversHeader, .howItWorksHeader, .testimonialsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 40px;
+}
+
+.servicesHeader h1, .caregiversHeader h1, .howItWorksHeader h1, .testimonialsHeader h1 {
+    margin-top: 0;
+}
+
+.servicesContainer span, .caregiversContainer span, .howItWorksContainer span, .testimonialsContainer span {
+    text-transform: uppercase;
+    color: #ff6b6b;
+    font-weight: 600;
+}
+
+.servicesCards, .caregiversCards {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.servicesCards .card {
+    position: relative;
+    width: 30%;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.servicesCards .card:hover {
+    transform: translateY(-10px);
+}
+
+.servicesCards .card img {
+    width: 100%;
+    height: 500px;
+    border-radius: 20px;
+    object-fit: cover;
+}
+
+.servicesCards .card .cardInfo {
+    padding: 20px;
+    background: white;
+}
+
+.servicesCards .card .cardName h3 {
+    margin: 10px 0 5px 0;
+    color: #2a7f62;
+}
+
+.servicesCards .card .cardName p {
+    color: #ff6b6b;
+    font-weight: 600;
+    margin: 0;
+}
+
+.servicesCards .card .serviceDesc {
+    color: #666;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+/* === CAREGIVERS SECTION === */
+.caregiversContainer {
+    background-color: #f9f9f9;
+    margin-top: 100px;
+    padding: 80px 0;
+    border-radius: 100px 100px 0 0;
+}
+
+.caregiversContainer .topCaregivers {
+    max-width: 1300px;
+    margin: auto;
+}
+
+.caregiversCards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+
+.caregiversCards .card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.caregiversCards .card:hover {
+    transform: translateY(-10px);
+}
+
+.caregiversCards .cardImg img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+}
+
+.caregiversCards .cardInfo {
+    padding: 20px;
+    text-align: center;
+}
+
+.caregiversCards .rating {
+    color: #ffc107;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.caregiversCards .cardName {
+    color: #2a7f62;
+    margin: 5px 0;
+}
+
+.caregiversCards .location, .caregiversCards .specialization {
+    color: #666;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+/* === HOW IT WORKS SECTION === */
+.howItWorksContainer {
+    padding: 80px 0;
+}
+
+.howItWorksContainer .howItWorks {
+    max-width: 1300px;
+    margin: auto;
+}
+
+.steps {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    gap: 30px;
+}
+
+.step {
+    flex: 1;
+    padding: 30px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.stepNumber {
+    width: 60px;
+    height: 60px;
+    background: #2a7f62;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 auto 20px auto;
+}
+
+.step h3 {
+    color: #2a7f62;
+}
+
+.step p {
+    color: #666;
+    font-size: 14px;
+}
+
+/* === TESTIMONIALS SECTION === */
+.testimonialsContainer {
+    max-width: 1300px;
+    margin: 80px auto;
+    text-align: center;
+}
+
+.testimonials {
+    display: flex;
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.testimonial {
+    flex: 1;
+    padding: 30px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    text-align: left;
+}
+
+.quote {
+    font-style: italic;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.author {
+    display: flex;
+    align-items: center;
+}
+
+.author img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.author h4 {
+    margin: 0;
+    color: #2a7f62;
+}
+
+.author p {
+    margin: 5px 0 0 0;
+    color: #888;
+    font-size: 14px;
+}
+
+/* === EMERGENCY BANNER === */
+.emergencyBanner {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('images/m.png');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 80px 0;
+    text-align: center;
+    margin-bottom: -50px;
+}
+
+.emergencyContent {
+    max-width: 800px;
+    margin: auto;
+}
+
+.emergencyContent h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.emergencyContent p {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.emergencyBtn {
+    background: #ff6b6b;
+    padding: 15px 40px;
+    font-size: 18px;
+}
+
+.emergencyBtn:hover {
+    background: #ff5252;
+}
+
+/* === EMERGENCY MODAL === */
+.emergency-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(30, 30, 30, 0.85);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.emergency-modal {
+    background: #fff;
+    border-radius: 18px;
+    padding: 40px 30px 30px 30px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    text-align: center;
+    min-width: 300px;
+    max-width: 90vw;
+    position: relative;
+    animation: popIn 0.25s;
+}
+@keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+.close-modal {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    font-size: 2em;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.close-modal:hover {
+    color: #ff6b6b;
+}
+.emergency-modal h3 {
+    margin-top: 0;
+    color: #2a7f62;
+    font-size: 1.4em;
+}
+.emergency-modal a {
+    font-size: 1.3em;
+}
+
+/* === FOOTER === */
+.footerContainer {
+    background-color: #2a7f62;
+    padding: 80px 0 30px 0;
+    color: white;
+}
+
+.footer {
+    max-width: 1300px;
+    margin: auto;
+}
+
+.footerColumns {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 50px;
+    flex-wrap: nowrap;
+}
+
+.footerColumn {
+    flex: 1;
+    padding: 0 20px;
+    margin: 0 20px 30px 20px;
+}
+
+.footerColumn h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.footerColumn p, .footerColumn a {
+    color: #e0e0e0;
+    font-size: 14px;
+    line-height: 1.8;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.footerColumn a:hover {
+    text-decoration: underline;
+}
+
+.footerBottom {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 14px;
+    color: #e0e0e0;
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 1200px) {
+    .header, .landingPage, .servicesContainer, .topCaregivers, .howItWorks, .testimonialsContainer, .footer {
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+    .searchBar .searchBtn {
+        left: 300px;
+    }
+    .caregiversCards {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        height: auto;
+        padding: 20px;
+    }
+    .headerLinks {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .landingPage {
+        flex-direction: column;
+        padding: 50px 20px;
+    }
+    .leftSide, .imageContainer {
+        flex: 1 1 100%;
+    }
+    .imageContainer {
+        margin-top: 40px;
+    }
+    .searchBar input {
+        width: 100%;
+    }
+    .searchBar .searchBtn {
+        position: relative;
+        left: 0;
+        margin-top: 15px;
+        width: 100%;
+    }
+    .servicesCards, .caregiversCards, .steps, .testimonials {
+        flex-direction: column;
+    }
+    .servicesCards .card, .caregiversCards .card, .testimonial {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    .caregiversCards {
+        grid-template-columns: 1fr;
+    }
+    .footerColumns {
+        flex-direction: column;
+    }
+    .footerColumn {
+        margin-bottom: 30px;
+    }
+}

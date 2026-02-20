@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" th:href="@{/Contact.css}" />
+  <title>Kontakt | PetCareConnect</title>
+  <meta name="_csrf" th:content="${_csrf.token}" />
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+</head>
+
+<body>
+<!-- HEADER -->
+<div class="headerContainer">
+  <div class="header">
+    <a th:href="@{/}" class="logo">
+      <img th:src="@{/images/logo1.png}" alt="PetCareConnect Logo" />
+    </a>
+
+    <div class="headerLinks">
+      <a th:href="@{/}">Startseite</a>
+      <a th:href="@{/betreuerfinden}">Betreuer finden</a>
+      <a th:href="@{/chat-overview}">Chat</a>
+      <a th:href="@{/contact}">Kontakt</a>
+
+      <div th:if="${user != null}" class="userProfileBox">
+        <a th:href="@{/profile}" th:text="${user.firstName + ' ' + user.lastName}" class="userNameLink"></a>
+        <img th:src="@{/profile/image/{id}(id=${user.id})}" alt="Profilbild" class="profilePic" />
+        <form th:action="@{/logout}" method="post">
+          <button class="btn" type="submit">Abmelden</button>
+        </form>
+      </div>
+
+      <div class="notification-bell" id="notificationBell" title="Neue Nachricht">
+        <span class="icon">🔔</span>
+        <span id="msgNotificationCount" class="badge" style="display: none;">0</span>
+        <div id="notificationDropdown">
+          <ul id="notificationList"></ul>
+        </div>
+      </div>
+
+      <div th:if="${#authentication.authenticated}">
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+          <button type="submit" class="btn">Abmelden</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- KONTAKTFORMULAR -->
+<main class="contact-form-wrapper">
+  <div class="contact-intro">
+    <h1>Kontaktiere unser Team</h1>
+    <p>Finde heraus, wie PetCareConnect dir helfen kann.</p>
+    <ul>
+      <li> Eine Plattform für Kommunikation & Betreuung</li>
+      <li> Sichere Verwaltung deiner Daten</li>
+      <li> Persönlicher Support & Beratung</li>
+    </ul>
+  </div>
+
+  <form id="contactForm" class="contact-form" action="/contact/submit" method="post">
+    <div class="form-group">
+      <label for="firstName">Vorname *</label>
+      <input type="text" id="firstName" name="firstName" required />
+    </div>
+    <div class="form-group">
+      <label for="lastName">Nachname *</label>
+      <input type="text" id="lastName" name="lastName" required />
+    </div>
+    <div class="form-group">
+      <label for="email">E-Mail *</label>
+      <input type="email" id="email" name="email" required />
+    </div>
+    <div class="form-group full-width">
+      <label for="city">Stadt *</label>
+      <input type="text" id="city" name="city" list="cityList" placeholder="z. B. Berlin" required />
+      <datalist id="cityList">
+        <option value="Berlin">
+        <option value="Lübeck">
+        <option value="Hamburg">
+        <option value="München">
+        <option value="Köln">
+        <option value="Frankfurt am Main">
+        <option value="Stuttgart">
+        <option value="Düsseldorf">
+        <option value="Dortmund">
+        <option value="Bremen">
+        <option value="Leipzig">
+        <option value="Nürnberg">
+        <option value="Hannover">
+      </datalist>
+    </div>
+    <div class="form-group full-width">
+      <label for="message">Deine Nachricht</label>
+      <textarea id="message" name="message" placeholder="Wobei können wir helfen?"></textarea>
+    </div>
+    <p class="form-note">
+      Mit dem Absenden erkennst du unsere <a href="/datenschutz">Datenschutzrichtlinie</a> an.
+    </p>
+    <button type="submit" class="submit-btn">Absenden</button>
+  </form>
+</main>
+
+<div id="successMessage" class="success-message" style="display:none;">
+  Danke für deine Nachricht! Wir melden uns bald bei dir.
+</div>
+
+<!-- FOOTER -->
+<div class="footerContainer">
+  <div class="footer">
+    <div class="footerColumns">
+      <div class="footerColumn">
+        <h3>PetCareConnect</h3>
+        <p>Die beste Plattform für Haustierbetreuung in Deutschland</p>
+      </div>
+      <div class="footerColumn">
+        <h3>Quick Links</h3>
+        <a href="#">Über uns</a>
+        <a href="#">Services</a>
+        <a href="#">Preise</a>
+        <a href="#">FAQ</a>
+      </div>
+      <div class="footerColumn">
+        <h3>Kontakt</h3>
+        <p>info@petcareconnect.de</p>
+        <p>+49 30 1234567</p>
+      </div>
+    </div>
+    <div class="footerBottom">
+      © 2023 PetCareConnect GmbH. Alle Rechte vorbehalten.
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPT: NOTIFICATIONS & FORM -->
+<script th:inline="javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("contactForm");
+    const successMessage = document.getElementById("successMessage");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = {};
+      formData.forEach((value, key) => (data[key] = value));
+
+      const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+      const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
+
+      fetch("/contact/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          [csrfHeader]: csrfToken
+        },
+        body: JSON.stringify(data)
+      })
+              .then((res) => {
+                if (res.ok) {
+                  successMessage.style.display = "block";
+                  form.reset();
+                  setTimeout(() => { successMessage.style.display = "none"; }, 6000);
+                } else {
+                  alert("Fehler beim Absenden. Bitte versuche es erneut.");
+                }
+              })
+              .catch((err) => {
+                console.error("Fehler:", err);
+                alert("Technischer Fehler – bitte später erneut versuchen.");
+              });
+
+    });
+
+    // NOTIFICATIONS
+    const socket = new SockJS('/ws-chat');
+    const stompClient = Stomp.over(socket);
+    const notificationBell = document.getElementById("notificationBell");
+    const notificationDropdown = document.getElementById("notificationDropdown");
+    const notificationList = document.getElementById("notificationList");
+    const badge = document.getElementById("msgNotificationCount");
+
+    notificationBell.addEventListener("click", () => {
+      notificationDropdown.style.display = notificationDropdown.style.display === "none" ? "block" : "none";
+    });
+
+    fetch('/api/notifications/unread')
+            .then(res => res.json())
+            .then(notifications => {
+              if (notifications.length > 0) {
+                badge.style.display = "inline-block";
+                badge.innerText = notifications.length;
+                notifications.forEach(showNotification);
+              }
+            });
+
+    stompClient.connect({}, function () {
+      stompClient.subscribe("/user/queue/notify", function (message) {
+        const msg = JSON.parse(message.body);
+        showNotification(msg);
+        badge.style.display = "inline-block";
+        badge.innerText = parseInt(badge.innerText || "0") + 1;
+      });
+    });
+
+    function showNotification(msg) {
+      const listItem = document.createElement("li");
+      listItem.innerHTML = `
+        <a href="/chat?receiverId=${msg.senderId}" style="text-decoration: none; color: #333;">
+          Neue Nachricht von <strong>${msg.senderName}</strong><br/>
+          <small>${msg.content}</small>
+        </a>`;
+      notificationList.prepend(listItem);
+    }
+  });
+</script>
+</body>
+</html>
