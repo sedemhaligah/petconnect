@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Betreuer finden | PetCareConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/betreuerfinden.css}" />
+</head>
+<body>
+
+<!-- HEADER -->
+<!-- HEADER -->
+<div class="headerContainer">
+    <div class="header">
+        <a th:href="@{/}" class="logo">
+            <img th:src="@{/images/logo1.png}" alt="PetCareConnect Logo" />
+        </a>
+        <div class="headerLinks">
+            <a th:href="@{/}">Startseite</a>
+            <a th:href="@{/betreuerfinden}">Betreuer finden</a>
+            <a th:href="@{/chat-overview}">Chat</a>
+            <a th:href="@{/contact}">Kontakt</a>
+
+
+            <!-- User Info -->
+            <div th:if="${user != null}" class="userControls">
+                <a th:href="@{/profile}" th:text="${user.firstName + ' ' + user.lastName}" class="userNameLink">Mein Profil</a>
+                <img th:src="@{/profile/image/{id}(id=${user.id})}" alt="Profilbild" class="profilePic" />
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="btn logoutBtn">Abmelden</button>
+                </form>
+            </div>
+            <!-- Notification Bell -->
+            <div class="notification-bell" id="notificationBell" title="Neue Nachricht">
+                <span class="icon">🔔</span>
+                <span id="msgNotificationCount" class="badge" style="display: none;">0</span>
+                <div id="notificationDropdown">
+                    <ul id="notificationList"></ul>
+                </div>
+            </div>
+            <!-- Fallback for guests -->
+            <div th:if="${user == null}">
+                <a class="btn logoutBtn" th:href="@{/login}">Anmelden</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- LANDING SECTION -->
+<section class="landingPageContainer">
+    <div class="landingPage">
+        <div class="leftSide">
+            <p class="welcome">Finde den perfekten Betreuer</p>
+            <h1 class="slogan">Suche nach Standort</h1>
+            <p class="description">
+                Gib deinen Ort oder die Postleitzahl ein, um verfügbare Tierbetreuer in deiner Nähe zu entdecken.
+                Du kannst gezielt nach Betreuern in Berlin, Hamburg, München, Köln, Lübeck und vielen weiteren Städten filtern.
+            </p>
+            <div class="searchBar">
+                <form th:action="@{/betreuerfinden}" method="get" class="searchForm">
+                    <div class="searchRow">
+                        <input type="text" id="plzInput" name="plz" placeholder="PLZ eingeben" th:value="${plz}" />
+                        <button class="btn searchBtn" type="submit">SUCHEN</button>
+                    </div>
+
+                    <div class="toggleSwitch">
+                        <input type="radio" id="roleBetreuer" name="role" value="betreuer"
+                               th:checked="${role} == 'betreuer'" onchange="this.form.submit()" />
+                        <label for="roleBetreuer">🐾 Betreuer</label>
+
+                        <input type="radio" id="roleBesitzer" name="role" value="besitzer"
+                               th:checked="${role} == 'besitzer'" onchange="this.form.submit()" />
+                        <label for="roleBesitzer">👤 Besitzer</label>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        <div class="imageContainer">
+            <img th:src="@{/images/logo.png}" alt="Glückliche Haustiere mit Betreuerin" />
+        </div>
+    </div>
+</section>
+
+<!-- CAREGIVERS SECTION -->
+<section class="caregiversContainer">
+    <div class="topCaregivers">
+        <div class="caregiversCards">
+            <div th:if="${betreuerList != null and #lists.isEmpty(betreuerList)}">
+                <p>Keine Nutzer gefunden für die eingegebene PLZ.</p>
+            </div>
+            <div th:each="user : ${betreuerList}" class="card">
+                <div class="cardImg">
+                    <img th:src="@{/profile/image/{id}(id=${user.id})}" onerror="this.onerror=null;this.src='/images/w.png';" alt="Profilbild" />
+                </div>
+                <div class="cardInfo">
+                    <div class="rating">★★★★★</div>
+                    <h3 class="cardName" th:text="${user.firstName + ' ' + user.lastName}">Max Mustermann</h3>
+                    <p class="location" th:text="${user.address}">Adresse</p>
+                    <p class="specialization" th:text="${user.experience != null ? user.experience : 'Haustiere'}">Haustiere</p>
+                    <button class="btn" th:onclick="'window.location.href=\'/profile/' + ${user.id} + '\';'">Profil ansehen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footerContainer">
+    <div class="footer">
+        <div class="footerColumns">
+            <div class="footerColumn">
+                <h3>PetCareConnect</h3>
+                <p>Die beste Plattform für Haustierbetreuung in Deutschland</p>
+            </div>
+            <div class="footerColumn">
+                <h3>Quick Links</h3>
+                <a href="#">Über uns</a>
+                <a href="#">Services</a>
+                <a href="#">Preise</a>
+                <a href="#">FAQ</a>
+            </div>
+            <div class="footerColumn">
+                <h3>Kontakt</h3>
+                <p>info@petcareconnect.de</p>
+                <p>+49 30 1234567</p>
+            </div>
+        </div>
+        <div class="footerBottom">
+            © 2023 PetCareConnect GmbH. Alle Rechte vorbehalten.
+        </div>
+    </div>
+</footer>
+
+<!-- NOTIFICATION SOCKET -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", () => {
+        const socket = new SockJS('/ws-chat');
+        const stompClient = Stomp.over(socket);
+
+        const notificationBell = document.getElementById("notificationBell");
+        const notificationDropdown = document.getElementById("notificationDropdown");
+        const notificationList = document.getElementById("notificationList");
+        const badge = document.getElementById("msgNotificationCount");
+
+        // Toggle dropdown on click
+        notificationBell.addEventListener("click", () => {
+            notificationDropdown.style.display = notificationDropdown.style.display === "none" ? "block" : "none";
+        });
+
+        // Fetch unread messages
+        fetch('/api/notifications/unread')
+            .then(response => response.json())
+            .then(notifications => {
+                if (notifications.length > 0) {
+                    badge.style.display = "inline-block";
+                    badge.innerText = notifications.length;
+
+                    notifications.forEach(msg => showNotification(msg));
+                }
+            });
+
+        // WebSocket connection
+        stompClient.connect({}, function (frame) {
+            stompClient.subscribe("/user/queue/notify", function (message) {
+                const msg = JSON.parse(message.body);
+                showNotification(msg);
+                badge.style.display = "inline-block";
+                badge.innerText = parseInt(badge.innerText || "0") + 1;
+            });
+        });
+
+        function showNotification(msg) {
+            const listItem = document.createElement("li");
+            listItem.innerHTML = `
+                <a href="/chat?receiverId=${msg.senderId}" style="text-decoration: none; color: #333;">
+                    Neue Nachricht von <strong>${msg.senderName}</strong><br/>
+                    <small>${msg.content}</small>
+                </a>`;
+            notificationList.prepend(listItem);
+        }
+    });
+</script>
+</body>
+</html>

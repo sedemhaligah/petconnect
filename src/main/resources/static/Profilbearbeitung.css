@@ -1,0 +1,620 @@
+/* Allgemeine Basis-Stile */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+h1, h2, h3, h4 {
+    margin: 1.0em 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    background-color: #ff5252;
+    color: #fff;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #3a9d7a;
+}
+
+.primaryBtn {
+    background-color: #3a9d7a;
+}
+
+.secondaryBtn {
+    background-color: #fff;
+    color: #2a7f62;
+    border: 2px solid #2a7f62;
+}
+
+.secondaryBtn:hover {
+    background-color: #2a7f62;
+    color: white;
+}
+
+/* HEADER */
+.headerContainer {
+    background-color: #2a7f62;
+    border-bottom: 1px solid #eee;
+}
+
+.header {
+    height: 170px;
+    background-color: #2a7f62;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 100px 0 100px;
+    max-width: 1300px;
+    margin: auto;
+}
+
+.headerLinks {
+    display: flex;
+    gap: 30px;
+}
+
+.headerLinks a {
+    text-decoration: none;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 50px;
+    transition: .3s;
+}
+
+.headerLinks a:hover {
+    background-color: #3a9d7a;
+}
+
+.logo img {
+    width: 120px;
+}
+
+/* PROFILE HEADER */
+.profileHeaderContainer {
+    background: #75b6a0;
+    padding: 50px 100px;
+    border-radius: 0 0 90px 100px;
+}
+
+.profileHeader {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    max-width: 1400px;
+    margin: auto;
+}
+
+.profileImage {
+    position: relative;
+    cursor: pointer;
+}
+
+.profileImage img {
+    width: 300px;
+    height: 450px;
+    border-radius: 20px;
+    object-fit: cover;
+    transition: 0.3s ease;
+}
+
+.profileImage:hover img {
+    opacity: 0.8;
+}
+
+.profileInfo {
+    flex: 1;
+}
+
+.profileInfo h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.profile-inputs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* two columns */
+    gap: 20px 40px; /* row and column gap */
+    max-width: 100%;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    font-size: 18px;
+    padding: 12px;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.profile-inputs button {
+    grid-column: span 2;
+    padding: 12px 24px;
+    font-size: 18px;
+    border-radius: 30px;
+    border: none;
+    background-color: #FF6B6BFF;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.profile-inputs button:hover {
+    background-color: #3d7a6b;
+}
+
+/* Über mich Section */
+.aboutSection {
+    background: #f9f9f9;
+    padding: 50px 100px;
+    max-width: 100%;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.aboutBox {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    width: 90%;
+    min-width: 1000px;
+    margin: 0 auto;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+#aboutMeText {
+    width: 100%;
+    height: 400px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #f2fdf8;
+    resize: vertical;
+    margin-bottom: 15px;
+    background-color: white;
+}
+
+#saveButton {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: none;
+    background-color: #ff5252;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#saveButton:hover {
+    background-color: #e04e4e;
+}
+
+
+
+/* SERVICES SECTION */
+.profileServices {
+    background: #f9f9f9;
+    padding: 50px 100px;
+    max-width: 100%;
+    margin: auto;
+}
+
+.serviceCards {
+    display: flex;
+    gap: 30px;
+    padding: 50px 50px;
+    flex-wrap: wrap;
+}
+
+.serviceCard {
+    background: #fff;
+    padding: 20px;
+    border-radius: 20px;
+    flex: 1;
+    min-width: 40px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.serviceHeader {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
+.serviceCard input,
+.serviceCard textarea {
+    width: 100%;
+    font-size: 16px;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.serviceTitle {
+    flex: 1;
+    min-width: 200px;
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.price {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: auto;
+}
+
+.price span {
+    white-space: nowrap;
+    font-size: 14px;
+    color: #666;
+}
+
+.servicePrice {
+    width: 80px !important;
+    padding: 8px 5px;
+    text-align: right;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.serviceDescription {
+    height: 100px;
+    resize: vertical;
+}
+
+.serviceFeatures li {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+
+.removeServiceBtn {
+    background-color: #ff5252;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.removeServiceBtn:hover {
+    background-color: #e04e4e;
+}
+
+/* AVAILABILITY SECTION */
+.availabilitySection {
+    background: #f9f9f9;
+    padding: 50px 100px;
+    text-align: center;
+}
+
+/* Kalender Styling */
+#calendar {
+    width: 100%;
+    max-width: 100%;
+    height: 800px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+/* Kalender Styling */
+.fc .fc-toolbar {
+    background-color: #2a7f62;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.fc .fc-button {
+    background-color: #3a9d7a;
+    color: white;
+    border-radius: 5px;
+    border: none;
+}
+
+.fc .fc-button:hover {
+    background-color: #2a7f62;
+    color: white;
+}
+
+.fc .fc-daygrid-day-number {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.fc .fc-daygrid-day.fc-day-past {
+    background-color: #f1f1f1;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+    background-color: #e0f5ee;
+}
+
+/* REVIEWS SECTION */
+.reviewsSection {
+    background: #f9f9f9;
+    padding: 50px 100px;
+}
+
+.reviewFilters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.reviewFilters button {
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    background: #e0f5ee;
+    color: #2a7f62;
+}
+
+.reviewFilters .active {
+    background: #2a7f62;
+    color: white;
+}
+
+.reviews .review {
+    background: #fff;
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+.reviewHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reviewer {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.reviewer img {
+    width: 50px;
+    border-radius: 50%;
+}
+
+.reviewImages img {
+    width: 100px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+/* GALLERY SECTION */
+.gallerySection {
+    padding: 50px 100px;
+    background-color: #fff;
+}
+
+.gallery {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.gallery img {
+    width: 250px;
+    border-radius: 20px;
+}
+
+/* CONTACT SECTION */
+.contactSection {
+    background: #f2fdf8;
+    padding: 50px 100px;
+}
+
+.contactOptions {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.contactOption {
+    flex: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    min-width: 250px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+/* SIMILAR CAREGIVERS */
+.similarCaregivers {
+    background: #fff;
+    padding: 50px 100px;
+}
+
+.caregiversCards {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: #f9f9f9;
+    border-radius: 20px;
+    padding: 15px;
+    width: 250px;
+    text-align: center;
+}
+
+.cardImg img {
+    width: 50%;
+    border-radius: 15px;
+}
+
+.cardInfo {
+    padding: 10px 0;
+}
+
+.cardInfo .rating {
+    color: gold;
+    margin-bottom: 5px;
+}
+
+/* FOOTER */
+.footerContainer {
+    background-color: #2a7f62;
+    padding: 80px 0 30px 0;
+    color: white;
+}
+
+.footer {
+    max-width: 1300px;
+    margin: auto;
+}
+
+.footerColumns {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 50px;
+}
+
+.footerColumn {
+    flex: 1;
+    padding: 0 20px;
+}
+
+.footerColumn h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.footerColumn p, .footerColumn a {
+    color: #e0e0e0;
+    font-size: 14px;
+    line-height: 1.8;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.footerColumn a:hover {
+    text-decoration: underline;
+}
+
+.footerBottom {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 14px;
+    color: #e0e0e0;
+}
+
+/* Custom dropdown styling */
+.custom-select {
+    position: relative;
+    margin-top: 5px;
+}
+
+.custom-select select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    appearance: none; /* Remove default arrow */
+    background-color: white;
+    cursor: pointer;
+}
+
+/* Custom dropdown arrow */
+.custom-select::after {
+    content: "▼";
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    color: #666;
+    pointer-events: none; /* Ensures clicks pass through to the select */
+}
+
+/* Hover & Focus states */
+.custom-select select:hover {
+    border-color: #888;
+}
+
+.custom-select select:focus {
+    outline: none;
+    border-color: #555;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.photo-preview img {
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    transition: transform 0.2s;
+}
+
+.photo-preview img:hover {
+    transform: scale(1.05);
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+}
+
+.lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 8px;
+}
+

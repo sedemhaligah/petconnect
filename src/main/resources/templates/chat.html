@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat | PetCareConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/chat.css}" />
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="headerContainer">
+    <div class="header">
+        <a th:href="@{/}" class="logo">
+            <img th:src="@{/images/logo1.png}" alt="PetCareConnect Logo" />
+        </a>
+        <div class="headerLinks">
+            <a th:href="@{/}">Startseite</a>
+            <a th:href="@{/betreuerfinden}">Betreuer finden</a>
+            <a th:href="@{/chat-overview}">Chat</a>
+            <a th:href="@{/contact}">Kontakt</a>
+
+            <div th:if="${user != null}" class="userProfileBox">
+                <a th:href="@{/profile}" th:text="${user.firstName + ' ' + user.lastName}" class="userNameLink"></a>
+                <img th:src="@{/profile/image/{id}(id=${user.id})}" alt="Profilbild" class="profilePic" />
+                <form th:action="@{/logout}" method="post">
+                    <button class="btn" type="submit">Abmelden</button>
+                </form>
+            </div>
+
+            <div class="notification-bell" id="notificationBell" title="Neue Nachricht">
+                <span class="icon">🔔</span>
+                <span id="msgNotificationCount" class="badge" style="display: none;">0</span>
+                <div id="notificationDropdown">
+                    <ul id="notificationList"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CHAT SECTION -->
+<div class="chat-container">
+    <div class="chat-header">
+        <a th:href="@{/profile/{id}(id=${receiverId})}" class="chatHeaderProfile">
+            <img th:src="@{/profile/image/{id}(id=${receiverId})}" alt="Profilbild" class="chatHeaderPic" />
+            <h2 th:text="'Chat mit ' + ${receiverName}">Chat mit Benutzer</h2>
+        </a>
+    </div>
+
+    <div id="chatBox" class="chat-messages"></div>
+
+    <div class="chat-input">
+        <input id="chatInput" type="text" placeholder="Nachricht schreiben..." />
+        <button onclick="sendMessage()">Senden</button>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footerContainer">
+    <div class="footer">
+        <div class="footerColumns">
+            <div class="footerColumn">
+                <h3>PetCareConnect</h3>
+                <p>Die beste Plattform für Haustierbetreuung in Deutschland</p>
+            </div>
+            <div class="footerColumn">
+                <h3>Quick Links</h3>
+                <a href="#">Über uns</a>
+                <a href="#">Services</a>
+                <a href="#">Preise</a>
+                <a href="#">FAQ</a>
+            </div>
+            <div class="footerColumn">
+                <h3>Kontakt</h3>
+                <p>info@petcareconnect.de</p>
+                <p>+49 30 1234567</p>
+            </div>
+        </div>
+        <div class="footerBottom">
+            © 2023 PetCareConnect GmbH. Alle Rechte vorbehalten.
+        </div>
+    </div>
+</div>
+
+<!-- CHAT + NOTIFICATION SCRIPT -->
+<script>
+    let stompClient;
+    const senderId = [[${user.id}]];
+    const receiverId = [[${receiverId}]];
+
+    const roomId = senderId < receiverId ? `${senderId}_${receiverId}` : `${receiverId}_${senderId}`;
+
+    function normalizeRoomId(a, b) {
+        return a < b ? `${a}_${b}` : `${b}_${a}`;
+    }
+
+    function connect() {
+        const socket = new SockJS('/ws-chat');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            stompClient.subscribe(`/topic/messages/${roomId}`, function (message) {
+                const msg = JSON.parse(message.body);
+                showMessage(msg);
+            });
+
+            fetch(`/api/chat/history/${roomId}`)
+                .then(res => res.json())
+                .then(messages => {
+                    messages.forEach(msg => showMessage(msg));
+                });
+        });
+    }
+
+    function sendMessage() {
+        const content = document.getElementById('chatInput').value.trim();
+        if (!content) return;
+
+        const normalizedRoomId = normalizeRoomId(senderId, receiverId);
+        stompClient.send(
+            `/app/chat.send.${normalizedRoomId}`,
+            {},
+            JSON.stringify({
+                roomId: normalizedRoomId,
+                senderId,
+                receiverId,
+                content: content
+            })
+        );
+
+        document.getElementById('chatInput').value = '';
+    }
+
+    function showMessage(msg) {
+        const isMyMessage = msg.senderId === senderId;
+        const chatBox = document.getElementById("chatBox");
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add(isMyMessage ? "sent" : "received");
+        messageDiv.textContent = msg.content;
+        chatBox.appendChild(messageDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        connect();
+
+        const chatInput = document.getElementById("chatInput");
+        chatInput.addEventListener("keydown", function(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // NOTIFICATION LOGIC
+        const socket = new SockJS('/ws-chat');
+        const notifClient = Stomp.over(socket);
+
+        const notificationBell = document.getElementById("notificationBell");
+        const notificationDropdown = document.getElementById("notificationDropdown");
+        const notificationList = document.getElementById("notificationList");
+        const badge = document.getElementById("msgNotificationCount");
+
+        notificationBell.addEventListener("click", () => {
+            notificationDropdown.style.display = notificationDropdown.style.display === "none" ? "block" : "none";
+        });
+
+        fetch('/api/notifications/unread')
+            .then(response => response.json())
+            .then(notifications => {
+                if (notifications.length > 0) {
+                    badge.style.display = "inline-block";
+                    badge.innerText = notifications.length;
+                    notifications.forEach(msg => showNotification(msg));
+                }
+            });
+
+        notifClient.connect({}, function (frame) {
+            notifClient.subscribe("/user/queue/notify", function (message) {
+                const msg = JSON.parse(message.body);
+                showNotification(msg);
+                badge.style.display = "inline-block";
+                badge.innerText = parseInt(badge.innerText || "0") + 1;
+            });
+        });
+
+        function showNotification(msg) {
+            const listItem = document.createElement("li");
+            listItem.innerHTML = `
+        <a href="/chat?receiverId=${msg.senderId}" style="text-decoration: none; color: #333;">
+          Neue Nachricht von <strong>${msg.senderName}</strong><br/>
+          <small>${msg.content}</small>
+        </a>`;
+            notificationList.prepend(listItem);
+        }
+    });
+</script>
+
+</body>
+</html>

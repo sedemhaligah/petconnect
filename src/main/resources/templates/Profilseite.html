@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- FONTS -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+
+  <link rel="stylesheet" href="/Profilseite.css" />
+
+  <!-- FullCalendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet" />
+
+  <!-- FullCalendar JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+
+  <title>Profil | PetCareConnect</title>
+</head>
+<body>
+<!-- HEADER -->
+<div class="headerContainer">
+  <div class="header">
+    <a th:href="@{/}" class="logo">
+      <img src="/images/logo1.png" alt="PetCareConnect Logo" />
+    </a>
+
+    <div class="headerLinks" id="headerLinks">
+      <a th:href="@{/}">Startseite</a>
+      <a th:href="@{/betreuerfinden}">Betreuer finden</a>
+      <a href="contactUs.html">Kontakt</a>
+      <a th:href="@{/chat-overview}">Chat</a>
+      <a th:href="@{/profile}" style="color: white; font-weight: 500; text-decoration: none;">
+        <span th:text="${currentUser.firstName + ' ' + currentUser.lastName}" class="user-name"></span>
+      </a>
+      <form th:action="@{/logout}" method="post">
+        <button class="btn">Abmelden</button>
+      </form>
+
+
+      <div class="notification-bell" id="notificationBell" title="Neue Nachricht">
+        <span class="icon">🔔</span>
+        <span id="msgNotificationCount" class="badge" style="display: none;">1</span>
+
+        <div id="notificationDropdown">
+          <ul id="notificationList">
+            <!-- Dynamische Benachrichtigungen -->
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Success message -->
+<div th:if="${success}" class="alert alert-success">
+  <span th:text="${success}"></span>
+</div>
+
+<!-- PROFILE HEADER -->
+<div class="profileHeaderContainer">
+  <div class="profileHeader">
+    <div class="profileImage">
+      <img th:src="@{/profile/image/{id}(id=${user.id})}"
+           onerror="this.onerror=null;this.src='/images/w.png';"
+           alt="Profile Image" />
+    </div>
+    <div class="profileInfo">
+      <h1 th:text="${user.firstName + ' ' + user.lastName}">Anna M.</h1>
+      <div class="rating">★★★★★ <span>(42 Bewertungen)</span></div>
+      <p class="location" th:text="${user.address + (user.plz != null ? ', ' + user.plz : '')}">Berlin, Deutschland</p>
+      <p class="experience" th:text="${user.experience != null ? user.experience : ''}"></p>
+
+      <div class="profileActions">
+        <!-- Show edit button if viewing own profile -->
+        <a th:if="${isOwnProfile}" th:href="@{/profile/edit}" class="btn secondaryBtn">Profil bearbeiten</a>
+
+        <!-- Always show these buttons -->
+        <a th:href="@{/chat(receiverId=${user.id})}" class="btn primaryBtn">Nachricht senden</a>
+        <a th:href="@{/user/{id}(id=${user.id})}" class="btn primaryBtn" style="background-color: #ff9800;">
+          Bewertung abgeben
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT SECTION -->
+<div class="aboutSection">
+  <h2>Über mich</h2>
+  <p th:text="${user.aboutMe != null ? user.aboutMe : 'Hallo! Ich bin ' + user.firstName + ' und eine leidenschaftliche Tierliebhaberin mit über 5 Jahren Erfahrung in der Haustierbetreuung.'}">
+    Hallo! Ich bin Anna und eine leidenschaftliche Tierliebhaberin mit über 5 Jahren Erfahrung in der Haustierbetreuung.
+    ...
+  </p>
+
+  <!-- Haustierbilder Galerie -->
+  <div class="pet-photo-section">
+    <h2>Meine Haustierfotos</h2>
+    <div class="photo-gallery" id="petPhotoGallery">
+      <div th:each="photo, iterStat : ${petPhotos}" class="photo-item">
+        <img th:src="@{'/uploads/' + ${photo.fileName}}" alt="Haustierbild" th:attr="data-index=${iterStat.index}" class="previewable-photo" style="height: 100px; border-radius: 5px; margin: 5px; cursor: pointer;" />
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Lightbox für große Bildansicht -->
+<div id="lightboxOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; z-index:1000;">
+  <button class="close" onclick="closeLightbox()" style="position:absolute;top:20px;right:30px;font-size:30px;color:white;background:none;border:none;cursor:pointer">×</button>
+  <button class="prev" onclick="prevImage()" style="position:absolute;left:20px;font-size:30px;color:white;background:none;border:none;cursor:pointer">◀</button>
+  <img id="lightboxImage" src="" alt="Preview" style="max-height:80vh; max-width:80vw; border-radius:10px;" />
+  <button class="next" onclick="nextImage()" style="position:absolute;right:20px;font-size:30px;color:white;background:none;border:none;cursor:pointer">▶</button>
+</div>
+
+
+<!-- SERVICES SECTION -->
+<div class="profileServices" th:if="${user.services != null && !user.services.isEmpty()}">
+  <h2>Meine Dienstleistungen</h2>
+
+  <div class="serviceCards">
+    <!-- Dynamic service cards -->
+    <div class="serviceCard" th:each="service : ${user.services}">
+      <div class="serviceHeader">
+        <h3 th:text="${service.title}">Täglicher Gassi-Service</h3>
+        <span class="price" th:text="${'€' + service.price + '/Std'}">€15/Spaziergang</span>
+      </div>
+      <p th:text="${service.description}">30-60 Minuten Spaziergänge in Ihrem Viertel mit regelmäßigen Updates</p>
+      <ul class="serviceFeatures">
+        <li th:each="feature : ${service.features}" th:text="${feature}">Einzelspaziergänge</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- AVAILABILITY SECTION -->
+<div class="availabilitySection">
+  <h2>Verfügbarkeit</h2>
+  <div id="calendar"></div>
+</div>
+
+<!-- REVIEWS SECTION -->
+<div class="reviewsSection">
+  <h2>Kundenbewertungen <span>(42)</span></h2>
+
+  <div class="reviewFilters">
+    <button class="active">Alle</button>
+    <button>5 Sterne (38)</button>
+    <button>4 Sterne (4)</button>
+    <button>Mit Fotos (12)</button>
+  </div>
+
+  <div class="reviews" th:if="${bewertungen != null and !bewertungen.isEmpty()}">
+    <div class="review" th:each="bewertung : ${bewertungen}">
+      <div class="reviewHeader">
+        <div class="reviewer">
+          <img th:src="@{/profile/image/{id}(id=${bewertung.autor.id})}"
+               onerror="this.onerror=null;this.src='/images/w.png';"
+               alt="Profilbild" />
+          <div>
+            <h4 th:text="${bewertung.autor.firstName + ' ' + bewertung.autor.lastName}">Max M.</h4>
+            <div class="rating" th:text="${'★'.repeat(bewertung.rating) + '☆'.repeat(5 - bewertung.rating)}">★★★★☆</div>
+          </div>
+        </div>
+        <span class="reviewDate" th:text="${#temporals.format(bewertung.erstellungsdatum, 'dd.MM.yyyy')}">01.01.2024</span>
+      </div>
+      <p class="reviewText" th:text="${bewertung.kommentar}">Kommentartext</p>
+    </div>
+  </div>
+
+  <div th:if="${bewertungen == null or #lists.isEmpty(bewertungen)}">
+    <p>Keine Bewertungen vorhanden.</p>
+  </div>
+
+
+  <button class="btn">Alle Bewertungen anzeigen</button>
+</div>
+
+<!-- CONTACT SECTION -->
+<div class="contactSection">
+  <h2>Kontaktieren Sie mich</h2>
+  <div class="contactOptions">
+    <div class="contactOption">
+      <h3>Per Nachricht</h3>
+      <p>Antwort innerhalb von 2 Stunden</p>
+      <button class="btn">Nachricht senden</button>
+    </div>
+    <div class="contactOption">
+      <h3>Telefonisch</h3>
+      <p th:text="${user.phone}">+49 176 12345678</p>
+      <button class="btn">Anrufen</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIMILAR CAREGIVERS -->
+<div class="similarCaregivers" th:if="${ähnlicheNutzer != null and !ähnlicheNutzer.isEmpty()}">
+  <h2 th:text="'Ähnliche ' + (${user.role} == 'betreuer' ? 'Betreuer' : 'Besitzer') + ' in ' + ${user.plz}">Ähnliche Nutzer</h2>
+
+  <div class="caregiversCards">
+    <div class="card" th:each="nutzer : ${ähnlicheNutzer}">
+      <div class="cardImg">
+        <img th:src="@{/profile/image/{id}(id=${nutzer.id})}" onerror="this.onerror=null;this.src='../static/images/m.png';" alt="Profilbild" />
+      </div>
+      <div class="cardInfo">
+        <div class="rating">★★★★☆</div> <!-- or dynamic rating if available -->
+        <h3 class="cardName" th:text="${nutzer.firstName + ' ' + nutzer.lastName}">Max Mustermann</h3>
+        <p class="location" th:text="${nutzer.address}">Adresse</p>
+        <p class="specialization" th:text="${nutzer.experience != null ? nutzer.experience : 'Haustiere'}">Haustiere</p>
+        <button class="btn" th:onclick="'window.location.href=\'/profile/' + ${nutzer.id} + '\';'">Profil ansehen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- FOOTER -->
+<div class="footerContainer">
+  <div class="footer">
+    <div class="footerColumns">
+      <div class="footerColumn">
+        <h3>PetCareConnect</h3>
+        <p>Die beste Plattform für Haustierbetreuung in Deutschland</p>
+      </div>
+      <div class="footerColumn">
+        <h3>Quick Links</h3>
+        <a href="#">Über uns</a>
+        <a href="#">Services</a>
+        <a href="#">Preise</a>
+        <a href="#">FAQ</a>
+      </div>
+      <div class="footerColumn">
+        <h3>Kontakt</h3>
+        <p>info@petcareconnect.de</p>
+        <p>+49 0000000000</p>
+      </div>
+    </div>
+    <div class="footerBottom">
+      © 2023 PetCareConnect GmbH. Alle Rechte vorbehalten.
+    </div>
+  </div>
+</div>
+<script th:inline="javascript">
+  const userId = /*[[${user.id}]]*/ 0;  // Make sure this correctly gets the user's ID
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      events: function(info, successCallback, failureCallback) {
+        fetch(`/api/availability/${userId}`)  // Replace with actual userId dynamically
+                .then(response => response.json())
+                .then(data => {
+                  const events = data.map(item => {
+                    return {
+                      title: 'Verfügbar',  // Event title (can be customized)
+                      start: item.date,    // Availability date
+                      allDay: true         // All-day event
+                    };
+                  });
+                  successCallback(events);
+                })
+                .catch(error => {
+                  console.error('Error fetching availability:', error);
+                  failureCallback(error);
+                });
+      },
+      dateClick: function(info) {
+        // Function to handle date click
+        var date = info.dateStr;  // Date clicked
+        console.log('Date clicked: ' + date);
+
+        // Show a prompt to add or remove availability
+        if (confirm(`Möchten Sie Ihre Verfügbarkeit für den ${date} ändern?`)) {
+          // Add availability by sending a request
+          fetch('/api/availability/add', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: userId,  // Ensure you have the userId available here
+              date: date
+            })
+          })
+                  .then(response => response.json())
+                  .then(data => {
+                    alert('Verfügbarkeit wurde hinzugefügt!');
+                    calendar.refetchEvents();  // Refresh the calendar events
+                  })
+                  .catch(error => {
+                    console.error('Error adding availability:', error);
+                  });
+        }
+      }
+    });
+
+    calendar.render();
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const images = document.querySelectorAll('.photo-grid img');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+
+    images.forEach(img => {
+      img.addEventListener('click', () => {
+        lightboxImg.src = img.src;
+        lightbox.style.display = 'flex';
+      });
+    });
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+<script th:inline="javascript">
+  document.addEventListener("DOMContentLoaded", () => {
+    const socket = new SockJS('/ws-chat');
+    const stompClient = Stomp.over(socket);
+
+    const notificationBell = document.getElementById("notificationBell");
+    const notificationDropdown = document.getElementById("notificationDropdown");
+    const notificationList = document.getElementById("notificationList");
+    const badge = document.getElementById("msgNotificationCount");
+
+    notificationBell.addEventListener("click", () => {
+      notificationDropdown.style.display = notificationDropdown.style.display === "none" ? "block" : "none";
+    });
+
+    stompClient.connect({}, function (frame) {
+      console.log("Connected: " + frame);
+      stompClient.subscribe("/user/queue/notify", function (message) {
+        const msg = JSON.parse(message.body);
+        showNotification(msg);
+      });
+    });
+
+    function showNotification(msg) {
+      badge.style.display = "inline-block";
+      badge.innerText = parseInt(badge.innerText || "0") + 1;
+
+      const listItem = document.createElement("li");
+      listItem.innerHTML = `
+        <a href="/chat?receiverId=${msg.senderId}" style="text-decoration: none; color: #333;">
+          Neue Nachricht von <strong>${msg.senderName}</strong><br/>
+          <small>${msg.content}</small>
+        </a>
+      `;
+      notificationList.prepend(listItem);
+    }
+  });
+</script>
+<script>
+  let images = [];
+  let currentIndex = 0;
+
+  document.addEventListener("DOMContentLoaded", () => {
+    images = Array.from(document.querySelectorAll(".previewable-photo"));
+    const lightbox = document.getElementById("lightboxOverlay");
+    const lightboxImg = document.getElementById("lightboxImage");
+
+    images.forEach((img, index) => {
+      img.addEventListener("click", () => {
+        currentIndex = index;
+        showLightbox();
+      });
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (lightbox.style.display === "flex") {
+        if (e.key === "ArrowRight") nextImage();
+        if (e.key === "ArrowLeft") prevImage();
+        if (e.key === "Escape") closeLightbox();
+      }
+    });
+  });
+
+  function showLightbox() {
+    const lightbox = document.getElementById("lightboxOverlay");
+    const lightboxImg = document.getElementById("lightboxImage");
+    lightboxImg.src = images[currentIndex].src;
+    lightbox.style.display = "flex";
+  }
+
+  function closeLightbox() {
+    document.getElementById("lightboxOverlay").style.display = "none";
+  }
+
+  function nextImage() {
+    currentIndex = (currentIndex + 1) % images.length;
+    showLightbox();
+  }
+
+  function prevImage() {
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    showLightbox();
+  }
+</script>
+<script>
+  function logout() {
+    fetch('/logout', {
+      method: 'POST',
+      credentials: 'same-origin'
+    })
+            .then(res => {
+              if (res.ok) {
+                window.location.href = "/login";
+              } else {
+                console.error("Logout failed");
+              }
+            });
+  }
+</script>
+
+</body>
+</html>

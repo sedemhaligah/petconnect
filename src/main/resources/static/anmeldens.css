@@ -1,0 +1,265 @@
+/* Grundlegendes Layout */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    background: #f4f4f4;
+}
+
+.headerContainer {
+    background: #2a7f62;
+    border-bottom: 1px solid #eee;
+}
+
+.header {
+    background-color: #2a7f62;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo img {
+    width: 120px;
+}
+.headerLinks {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.headerLinks a,
+.headerLinks button {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.headerLinks .btn {
+    background: #ff5252;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+
+.signupContainer {
+    display: flex;
+    padding: 30px 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 40px;
+}
+
+.signupForm {
+    flex: 1;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+.signupForm h1 {
+    color: #2a7f62;
+    margin-bottom: 10px;
+}
+
+.signupForm p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #444;
+}
+
+.formGroup input,
+.formGroup select {
+    width: 90%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+}
+
+.formGroup input:focus,
+.formGroup select:focus {
+    outline: none;
+    border-color: #2a7f62;
+}
+
+.formRow {
+    display: flex;
+    gap: 20px;
+}
+
+.formRow .formGroup {
+    flex: 1;
+}
+
+.checkboxGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.checkboxGroup label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: normal;
+}
+
+.checkboxGroup input[type="checkbox"] {
+    accent-color: #2a7f62;
+}
+
+.termsGroup {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 30px 0;
+    -ms-flex-wrap: wrap;
+}
+
+.termsGroup a {
+    color: #2a7f62;
+    text-decoration: underline;
+}
+
+.primaryBtn {
+    background: #2a7f62;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.loginPrompt {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+}
+
+.loginPrompt a {
+    color: #2a7f62;
+    font-weight: 500;
+}
+
+.signupBenefits {
+    flex: 1;
+    max-width: 500px;
+}
+
+.signupBenefits h2 {
+    color: #2a7f62;
+    margin-bottom: 20px;
+}
+
+.signupBenefits ul {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 40px;
+}
+
+.signupBenefits li {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.signupBenefits li:before {
+    content: "✓ ";
+    color: #2a7f62;
+    font-weight: bold;
+}
+
+.testimonial {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    margin-top: 40px;
+}
+
+.testimonial img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    float: left;
+    margin-right: 15px;
+}
+
+.testimonial blockquote {
+    font-style: italic;
+    color: #555;
+    margin: 0 0 10px 0;
+}
+
+.testimonial cite {
+    display: block;
+    font-style: normal;
+    font-weight: 500;
+    color: #2a7f62;
+}
+
+/* FOOTER */
+.footerContainer {
+    background-color: #2a7f62;
+    padding: 80px 0 30px 0;
+    color: white;
+}
+
+.footer {
+    max-width: 1300px;
+    margin: auto;
+}
+
+.footerColumns {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 50px;
+}
+
+.footerColumn {
+    flex: 1;
+    padding: 0 20px;
+}
+
+.footerColumn h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.footerColumn p, .footerColumn a {
+    color: #e0e0e0;
+    font-size: 14px;
+    line-height: 1.8;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.footerColumn a:hover {
+    text-decoration: underline;
+}
+
+.footerBottom {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 14px;
+    color: #e0e0e0;
+}

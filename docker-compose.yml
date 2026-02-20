@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  postgres_local:
+    image: postgres:15
+    container_name: postgres_local
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: petconnect-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: petconnectdatabase
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: kasper@test.de
+      PGADMIN_DEFAULT_PASSWORD: passwort
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    restart: always
+
+
+  petconnect-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: petconnect-app
+    ports:
+      - "8004:8003"
+    depends_on:
+      - postgres_local
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_local:5432/petconnect-db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: petconnectdatabase
+    restart: on-failure
+
+volumes:
+  pgdata:
+  pgadmin-data:

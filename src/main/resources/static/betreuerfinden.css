@@ -1,0 +1,448 @@
+:root {
+    --primary: #2a7f62;
+    --secondary: #3a9d7a;
+    --accent: #ff6b6b;
+    --accent-hover: #ff5252;
+    --light: #f9f9f9;
+    --text-dark: #2a7f62;
+    --text-muted: #666;
+    --font: 'Poppins', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font);
+    background-color: #fff;
+}
+
+/* === HEADER (Unified) === */
+.headerContainer {
+    background-color: var(--primary);
+}
+
+.header {
+    max-width: 1300px;
+    margin: auto;
+    padding: 20px 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+    flex-wrap: wrap;
+}
+
+.logo img {
+    width: 120px;
+}
+
+.headerLinks {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.headerLinks a,
+.headerLinks button,
+.headerLinks span {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 50px;
+    transition: 0.3s;
+    font-weight: 500;
+    background: transparent;
+    border: none;
+    font-family: var(--font);
+}
+
+.headerLinks a:hover,
+.headerLinks button:hover {
+    background-color: var(--secondary);
+    cursor: pointer;
+}
+
+.btn.logoutBtn {
+    background-color: var(--accent);
+    font-weight: bold;
+}
+
+.btn.logoutBtn:hover {
+    background-color: var(--accent-hover);
+}
+
+/* Profile + Controls */
+.userControls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.userControls a {
+    font-weight: 600;
+}
+
+.profilePic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+}
+
+.notification-bell {
+    position: relative;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.notification-bell .badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 4px 7px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Additional page-specific styles preserved */
+/* LANDING PAGE */
+.landingPageContainer {
+    background-color: var(--secondary);
+    border-radius: 0 0 90px 100px;
+    padding: 100px 0;
+    color: #fff;
+}
+
+.landingPage {
+    display: flex;
+    max-width: 1300px;
+    margin: auto;
+    gap: 40px;
+}
+
+.leftSide {
+    flex: 2;
+}
+
+.imageContainer {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.imageContainer img {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.welcome {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.slogan {
+    font-size: 48px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.description {
+    font-size: 16px;
+    margin: 20px 0;
+    color: #f0f0f0;
+}
+
+.searchBar {
+    margin-top: 30px;
+    position: relative;
+}
+
+.searchBar input,
+.searchRow input[type="text"] {
+    width: 60%;
+    height: 50px;
+    padding: 0 20px;
+    border-radius: 50px;
+    border: none;
+    font-size: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.searchBtn,
+.searchRow .searchBtn {
+    position: absolute;
+    height: 52px;
+    padding: 0 25px;
+    border: none;
+    background-color: var(--accent);
+    color: #fff;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    left: 400px;
+    transition: 0.3s;
+}
+
+.searchBtn:hover,
+.searchRow .searchBtn:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+/* CARDS SECTION */
+.caregiversContainer {
+    background-color: var(--light);
+    padding: 80px 0;
+    border-radius: 100px 100px 0 0;
+    margin-top: 60px;
+}
+
+.topCaregivers {
+    max-width: 1300px;
+    margin: auto;
+}
+
+.caregiversCards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    justify-items: center;
+}
+
+.card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: 0.3s;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
+
+.cardImg {
+    height: 300px;
+    overflow: hidden;
+}
+
+.cardImg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cardInfo {
+    padding: 20px;
+    text-align: center;
+}
+
+.rating {
+    color: gold;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.cardName {
+    color: var(--text-dark);
+    margin: 10px 0 5px;
+    font-weight: 600;
+}
+
+.location,
+.specialization {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 3px 0;
+}
+
+.cardInfo .btn {
+    margin-top: 10px;
+}
+
+/* FOOTER */
+.footerContainer {
+    background-color: var(--primary);
+    color: #fff;
+    padding: 80px 20px 30px;
+}
+
+.footer {
+    max-width: 1300px;
+    margin: auto;
+}
+
+.footerColumns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: space-between;
+}
+
+.footerColumn {
+    flex: 1;
+    min-width: 200px;
+}
+
+.footerColumn h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.footerColumn a,
+.footerColumn p {
+    color: var(--text-light);
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-decoration: none;
+}
+
+.footerColumn a:hover {
+    text-decoration: underline;
+}
+
+.footerBottom {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 14px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .landingPage {
+        flex-direction: column;
+        padding: 50px 20px;
+    }
+
+    .searchBar input {
+        width: 100%;
+    }
+
+    .searchBtn {
+        position: relative;
+        left: 0;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .header {
+        flex-direction: column;
+        text-align: center;
+        height: auto;
+        padding: 20px;
+    }
+
+    .headerLinks {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+}
+
+/* Chat Icon */
+.chatToggle {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background-color: var(--accent);
+    color: white;
+    font-size: 24px;
+    padding: 10px 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
+
+/* Toggle Switch */
+.toggleSwitch {
+    display: flex;
+    background-color: var(--light);
+    border-radius: 50px;
+    overflow: hidden;
+    border: 2px solid var(--secondary);
+    height: 50px;
+}
+
+.toggleSwitch input[type="radio"] {
+    display: none;
+}
+
+.toggleSwitch label {
+    flex: 1;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-dark);
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+.toggleSwitch input[type="radio"]:checked + label {
+    background-color: var(--accent);
+    color: white;
+}
+
+/* Role Switch Dropdown */
+.roleSwitch select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--light);
+    color: var(--text-dark);
+    font-weight: 600;
+    font-family: var(--font);
+    padding: 12px 20px;
+    border: 2px solid var(--secondary);
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%232a7f62'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 10px;
+    padding-right: 32px;
+}
+
+.roleSwitch select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: #f0fdf7;
+}
+
+/* BUTTON */
+.btn {
+    background-color: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-2px);
+}

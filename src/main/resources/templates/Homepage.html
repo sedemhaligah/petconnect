@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/style.css}" />
+    <script th:src="@{/homepage.js}"></script>
+    <title>PetCareConnect</title>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="headerContainer">
+    <div class="header">
+        <a th:href="@{/}" class="logo">
+            <img th:src="@{/images/logo1.png}" alt="PetCareConnect Logo" />
+        </a>
+        <div class="headerLinks">
+            <a th:href="@{/}">Startseite</a>
+            <a th:href="@{/betreuerfinden}">Betreuer finden</a>
+            <a th:href="@{/chat-overview}">Chat</a>
+            <a th:href="@{/contact}">Kontakt</a>
+
+            <div th:if="${user != null}" class="userProfileBox">
+                <a th:href="@{/profile}" th:text="${user.firstName + ' ' + user.lastName}" class="userNameLink"></a>
+                <img th:src="@{/profile/image/{id}(id=${user.id})}" alt="Profilbild" class="profilePic" />
+                <form th:action="@{/logout}" method="post">
+                    <button class="btn" type="submit">Abmelden</button>
+                </form>
+            </div>
+            <div class="notification-bell" id="notificationBell" title="Neue Nachricht">
+                <span class="icon">🔔</span>
+                <span id="msgNotificationCount" class="badge" style="display: none;">1</span>
+
+                <div id="notificationDropdown">
+                    <ul id="notificationList">
+                        <!-- Dynamische Benachrichtigungen -->
+                    </ul>
+                </div>
+            </div>
+
+            <div th:if="${user == null}">
+                <a class="btn" th:href="@{/login}">Anmelden</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LANDING PAGE -->
+<div class="landingPageContainer">
+    <div class="landingPage">
+        <div class="leftSide">
+            <p class="welcome">Willkommen bei PetCareConnect</p>
+            <h1 class="slogan">Die beste Betreuung für Ihren Liebling!</h1>
+            <p class="description">
+                PetCareConnect verbindet Haustierbesitzer mit zuverlässigen Betreuern in Ihrer Nähe.
+                Egal ob regelmäßige Gassi-Gänge, Urlaubsbetreuung oder Notfallhilfe – finden Sie
+                den perfekten Betreuer für Ihr Haustier.
+            </p>
+            <div class="searchBar">
+                <form th:action="@{/betreuerfinden}" method="get">
+                    <input type="text" id="plzInput" name="plz" placeholder="PLZ oder Ort eingeben" />
+                    <button class="btn searchBtn" type="submit">BETREUER FINDEN</button>
+                </form>
+            </div>
+        </div>
+        <div class="imageContainer">
+            <img th:src="@{/images/logo.png}" alt="Glückliche Haustiere mit Betreuerin" />
+        </div>
+    </div>
+</div>
+
+<!-- SERVICES SECTION  -->
+<div class="servicesContainer">
+    <span>Unsere Services</span>
+    <div class="servicesHeader">
+        <h1>Wie wir Ihnen helfen können</h1>
+        <button class="btn">Alle Services</button>
+    </div>
+    <div class="servicesCards">
+        <!-- SERVICE 1 -->
+        <div class="card">
+            <img src="../images/Gassi-Service.png" alt="Hundespaziergang" />
+            <div class="cardInfo">
+                <div class="cardName">
+                    <p>Regelmäßig</p>
+                    <h3>Gassi-Service</h3>
+                </div>
+                <p class="serviceDesc">Professionelle Gassi-Geher für Ihren Hund</p>
+            </div>
+        </div>
+
+        <!-- SERVICE 2 -->
+        <div class="card">
+            <img src="../images/Urlaub.png" alt="Haustierbetreuung" />
+            <div class="cardInfo">
+                <div class="cardName">
+                    <p>Urlaub</p>
+                    <h3>Betreuung zu Hause</h3>
+                </div>
+                <p class="serviceDesc">Betreuung in Ihrer Abwesenheit</p>
+            </div>
+        </div>
+
+        <!-- SERVICE 3 -->
+        <div class="card" onclick="openEmergencyModal()" style="cursor:pointer;">
+            <img src="../images/Notfallfoto.png" alt="Notfallhilfe" />
+            <div class="cardInfo">
+                <div class="cardName">
+                    <p>Soforthilfe</p>
+                    <h3>Notfallservice</h3>
+                </div>
+                <p class="serviceDesc">Schnelle Hilfe in Notsituationen</p>
+            </div>
+        </div>
+
+        <!-- SERVICE 4 -->
+        <div class="card">
+            <img src="../images/Training.png" alt="Tiertraining" />
+            <div class="cardInfo">
+                <div class="cardName">
+                    <p>Training</p>
+                    <h3>Erziehung & Training</h3>
+                </div>
+                <p class="serviceDesc">Professionelle Trainer für Ihr Haustier</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TOP CAREGIVERS SECTION  -->
+<div class="caregiversContainer">
+    <div class="topCaregivers">
+        <span>Top Betreuer</span>
+        <div class="caregiversHeader">
+            <h1>Höchstbewertete Betreuer</h1>
+            <button class="btn">Alle anzeigen</button>
+        </div>
+
+        <div class="caregiversCards">
+            <!-- CAREGIVER 1  -->
+            <div class="card">
+                <div class="cardImg">
+                    <img src="../images/w.png" alt="Betreuerin Anna" />
+                </div>
+                <div class="cardInfo">
+                    <div class="rating">★★★★★</div>
+                    <h3 class="cardName">Anna M.</h3>
+                    <p class="location">Berlin</p>
+                    <p class="specialization">Hunde & Katzen</p>
+                    <button onclick="window.location.href='Profilseite.html'" class="btn">Profil ansehen</button>
+                </div>
+            </div>
+
+            <!-- CAREGIVER 2  -->
+            <div class="card">
+                <div class="cardImg">
+                    <img src="../images/m.png" alt="Betreuer Tom" />
+                </div>
+                <div class="cardInfo">
+                    <div class="rating">★★★★☆</div>
+                    <h3 class="cardName">Tom S.</h3>
+                    <p class="location">München</p>
+                    <p class="specialization">Exotische Tiere</p>
+                    <button onclick="window.location.href='Profilseite.html'" class="btn">Profil ansehen</button>
+                </div>
+            </div>
+
+            <!-- CAREGIVER 3  -->
+            <div class="card">
+                <div class="cardImg">
+                    <img src="../images/m.png" alt="Betreuerin Lisa" />
+                </div>
+                <div class="cardInfo">
+                    <div class="rating">★★★★★</div>
+                    <h3 class="cardName">Lisa K.</h3>
+                    <p class="location">Hamburg</p>
+                    <p class="specialization">Alle Haustiere</p>
+                    <button onclick="window.location.href='Profilseite.html'" class="btn">Profil ansehen</button>
+                </div>
+            </div>
+
+            <!-- CAREGIVER 4 -->
+            <div class="card">
+                <div class="cardImg">
+                    <img src="../images/m.png" alt="Betreuer Max" />
+                </div>
+                <div class="cardInfo">
+                    <div class="rating">★★★★☆</div>
+                    <h3 class="cardName">Max B.</h3>
+                    <p class="location">Köln</p>
+                    <p class="specialization">Hunde</p>
+                    <button onclick="window.location.href='Profilseite.html'" class="btn">Profil ansehen</button>
+                </div>
+            </div>
+
+            <!-- CAREGIVER 5 -->
+            <div class="card">
+                <div class="cardImg">
+                    <img src="../images/m.png" alt="Betreuer Max" />
+                </div>
+                <div class="cardInfo">
+                    <div class="rating">★★★★☆</div>
+                    <h3 class="cardName">Max B.</h3>
+                    <p class="location">Köln</p>
+                    <p class="specialization">Hunde</p>
+                    <button onclick="window.location.href='Profilseite.html'" class="btn">Profil ansehen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- HOW IT WORKS SECTION  -->
+<div class="howItWorksContainer">
+    <div class="howItWorks">
+        <div class="howItWorksHeader">
+            <span>Einfacher Prozess</span>
+            <h1>So funktioniert's</h1>
+        </div>
+
+        <div class="steps">
+            <!-- STEP 1  -->
+            <div class="step">
+                <div class="stepNumber">1</div>
+                <h3>Profil erstellen</h3>
+                <p>Erstellen Sie ein Profil für sich und Ihr Haustier</p>
+            </div>
+            <!-- STEP 2 -->
+            <div class="step">
+                <div class="stepNumber">2</div>
+                <h3>Betreuer finden</h3>
+                <p>Durchsuchen Sie unsere Datenbank nach passenden Betreuern</p>
+            </div>
+            <!-- STEP 3 -->
+            <div class="step">
+                <div class="stepNumber">3</div>
+                <h3>Kontakt aufnehmen</h3>
+                <p>Nutzen Sie unser Nachrichtensystem für Details</p>
+            </div>
+            <!-- STEP 4 -->
+            <div class="step">
+                <div class="stepNumber">4</div>
+                <h3>Buchen & Entspannen</h3>
+                <p>Buchen Sie den Service und genießen Sie sorgenfreie Zeit</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="testimonialsContainer">
+    <div class="testimonialsHeader">
+        <span>Erfahrungen</span>
+        <h1>Was unsere Nutzer sagen</h1>
+    </div>
+    <div class="testimonials">
+        <!-- TESTIMONIAL 1 -->
+        <div class="testimonial">
+            <div class="quote">"Super Service! Unser Hund liebt seinen Betreuer Max."</div>
+            <div class="author">
+                <img src="../images/w.png" alt="Sarah W." />
+                <div>
+                    <h4>Sarah W.</h4>
+                    <p>Hundebesitzerin</p>
+                </div>
+            </div>
+        </div>
+        <!-- TESTIMONIAL 2 -->
+        <div class="testimonial">
+            <div class="quote">"Endlich eine vertrauenswürdige Plattform für Tierbetreuung!"</div>
+            <div class="author">
+                <img src="../images/m.png" alt="Michael T." />
+                <div>
+                    <h4>Michael T.</h4>
+                    <p>Katzenbesitzer</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- EMERGENCY BANNER -->
+<div class="emergencyBanner">
+    <div class="emergencyContent">
+        <h2>Notfallservice</h2>
+        <p>Brauchen Sie sofortige Hilfe für Ihr Haustier?</p>
+        <button class="btn emergencyBtn" onclick="openEmergencyModal()">NOTFALLKONTAKT</button>
+    </div>
+</div>
+
+<!-- Emergency Modal -->
+<div id="emergencyModal" class="emergency-modal-overlay" style="display:none;">
+    <div class="emergency-modal">
+        <span class="close-modal" onclick="closeEmergencyModal()">&times;</span>
+        <h3>Notfallnummer</h3>
+        <p style="font-size: 1.5em; margin: 20px 0;">
+            <a href="tel:+49301234567" style="color: #ff6b6b; text-decoration: none; font-weight: bold;">
+                +49 30 1234567
+            </a>
+        </p>
+        <button class="btn" onclick="window.location.href='tel:+49301234567'">Jetzt anrufen</button>
+    </div>
+</div>
+
+<script>
+    function openEmergencyModal() {
+        document.getElementById('emergencyModal').style.display = 'flex';
+    }
+    function closeEmergencyModal() {
+        document.getElementById('emergencyModal').style.display = 'none';
+    }
+    // Optional: Schließen mit ESC-Taste
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "Escape") closeEmergencyModal();
+    });
+</script>
+
+
+
+<!-- FOOTER -->
+<div class="footerContainer">
+    <div class="footer">
+        <div class="footerColumns">
+            <div class="footerColumn">
+                <h3>PetCareConnect</h3>
+                <p>Die beste Plattform für Haustierbetreuung in Deutschland</p>
+            </div>
+            <div class="footerColumn">
+                <h3>Quick Links</h3>
+                <a href="#">Über uns</a>
+                <a href="#">Services</a>
+                <a href="#">Preise</a>
+                <a href="#">FAQ</a>
+            </div>
+            <div class="footerColumn">
+                <h3>Kontakt</h3>
+                <p>info@petcareconnect.de</p>
+                <p>+49 30 1234567</p>
+            </div>
+        </div>
+        <div class="footerBottom">
+            © 2023 PetCareConnect GmbH. Alle Rechte vorbehalten.
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+<script th:inline="javascript">
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const socket = new SockJS('/ws-chat');
+        const stompClient = Stomp.over(socket);
+
+        const notificationBell = document.getElementById("notificationBell");
+        const notificationDropdown = document.getElementById("notificationDropdown");
+        const notificationList = document.getElementById("notificationList");
+        const badge = document.getElementById("msgNotificationCount");
+
+        // Toggle dropdown on bell click
+        notificationBell.addEventListener("click", () => {
+            notificationDropdown.style.display = notificationDropdown.style.display === "none" ? "block" : "none";
+        });
+
+        let unreadCount = 0;
+
+        fetch('/api/notifications/unread')
+            .then(response => response.json())
+            .then(notifications => {
+                if (notifications.length > 0) {
+                    unreadCount = notifications.length;
+                    badge.style.display = "inline-block";
+                    badge.innerText = unreadCount;
+                    notifications.forEach(msg => showNotification(msg));
+                }
+            });
+
+        stompClient.connect({}, function (frame) {
+            stompClient.subscribe("/user/queue/notify", function (message) {
+                const msg = JSON.parse(message.body);
+                showNotification(msg);
+                unreadCount++;
+                badge.style.display = "inline-block";
+                badge.innerText = unreadCount;
+            });
+        });
+
+        function showNotification(msg) {
+            const listItem = document.createElement("li");
+            listItem.innerHTML = `
+    <a href="/chat?receiverId=${msg.senderId}" style="text-decoration: none; color: #333;">
+      Neue Nachricht von <strong>${msg.senderName}</strong><br/>
+      <small>${msg.content}</small>
+    </a>
+  `;
+            notificationList.prepend(listItem);
+        }
+
+    });
+</script>
+
+<script>
+    // PLZ-Suche
+    function submitSearch() {
+        const plz = document.getElementById("plzInput").value;
+        if (plz.trim() === "") {
+            alert("Bitte geben Sie eine PLZ oder einen Ort ein.");
+        } else {
+            window.location.href = `/betreuerfinden?plz=${encodeURIComponent(plz)}`;
+        }
+    }
+</script>
+
+</body>
+</html>
