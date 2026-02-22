@@ -36,3 +36,4 @@ backup.dump
 
 # Sensitive configs
 .env
+.properties
