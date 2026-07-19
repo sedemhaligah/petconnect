@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: petconnect-db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: petconnectdatabase
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-petconnectdatabase}
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: always
@@ -18,8 +18,8 @@ services:
     image: dpage/pgadmin4
     container_name: pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: kasper@test.de
-      PGADMIN_DEFAULT_PASSWORD: passwort
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
     ports:
       - "8080:80"
     volumes:
@@ -40,7 +40,7 @@ services:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_local:5432/petconnect-db
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: petconnectdatabase
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-petconnectdatabase}
     restart: on-failure
 
 volumes:

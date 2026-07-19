@@ -36,4 +36,6 @@ backup.dump
 
 # Sensitive configs
 .env
-.properties
+application-local.properties
+uploads/*
+!uploads/.gitkeep

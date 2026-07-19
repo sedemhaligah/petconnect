@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: petconnect-db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: petconnectdatabase
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-petconnectdatabase}
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 5s
@@ -29,7 +29,7 @@ services:
       SPRING_PROFILES_ACTIVE: test
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_test:5432/petconnect-db
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: petconnectdatabase
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-petconnectdatabase}
     depends_on:
       postgres_test:
         condition: service_healthy

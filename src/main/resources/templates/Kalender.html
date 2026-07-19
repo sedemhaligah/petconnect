@@ -45,7 +45,7 @@
 
 <script>
   const CLIENT_ID = '471307434042-ebshkf0cgae654o2jvkssu849sobgdrd.apps.googleusercontent.com';
-  const API_KEY = '***REMOVED-GOOGLE-API-KEY***';
+  const API_KEY = /*[[${googleApiKey}]]*/ 'YOUR_GOOGLE_API_KEY'; // injected server-side via Thymeleaf, see application.properties
   const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
   const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
 
